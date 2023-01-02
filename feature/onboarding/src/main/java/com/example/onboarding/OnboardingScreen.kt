@@ -1,7 +1,9 @@
 package com.example.onboarding
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +23,7 @@ import com.example.onboarding.model.onboardPages
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun OnboardingRoute(
     navigateToAuth: () -> Unit
@@ -44,16 +46,19 @@ internal fun OnboardingRoute(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        HorizontalPager(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.7f)
-                .systemBarsPadding(),
-            count = onboardPages.size,
-            state = pagerState,
-            userScrollEnabled = scrollEnabled
-        ) { page ->
-            PageUI(page = onboardPages[page])
+        // Remove overscroll effect
+        CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
+            HorizontalPager(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.7f)
+                    .systemBarsPadding(),
+                count = onboardPages.size,
+                state = pagerState,
+                userScrollEnabled = scrollEnabled
+            ) { page ->
+                PageUI(page = onboardPages[page])
+            }
         }
 
         AnimatedVisibility(visible = !isLastPage) {

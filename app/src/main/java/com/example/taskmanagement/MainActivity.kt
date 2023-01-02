@@ -10,13 +10,23 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
+import com.example.auth.navigation.authNavigationRouteGraph
+import com.example.auth.navigation.signUpRoute
 import com.example.designsystem.theme.TaskManagementTheme
+import com.example.onboarding.navigation.onboardingNavigationRoute
 import com.example.taskmanagement.navigation.TMNavHost
+import com.example.taskmanagement.utils.SharedPreferencesUtils
+import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var sharedPreferencesUtils: SharedPreferencesUtils
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        (application as App).component.inject(this)
+
         setContent {
             TaskManagementTheme {
                 Surface(
@@ -26,10 +36,17 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     TMNavHost(
                         navController = navController,
-                        onBackClick = {}
+                        onBackClick = {},
+                        onOnboardingPassed = { sharedPreferencesUtils.markNotFirstLaunch() },
+                        startDestination = defineStartDestination()
                     )
                 }
             }
         }
+    }
+
+    private fun defineStartDestination(): String {
+        if (!sharedPreferencesUtils.isFirstLaunch()) return authNavigationRouteGraph
+        return onboardingNavigationRoute
     }
 }

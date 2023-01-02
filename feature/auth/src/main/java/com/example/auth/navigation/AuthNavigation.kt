@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 
 
-private const val authNavigationRouteGraph = "auth_graph"
+const val authNavigationRouteGraph = "auth_graph"
 const val signUpRoute = "auth_route"
 
 fun NavController.navigateToAuth(){
