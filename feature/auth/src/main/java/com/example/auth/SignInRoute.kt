@@ -1,9 +1,9 @@
-package com.example.auth.navigation
+package com.example.auth
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun SignUpRoute() {
-    Text("SignUp")
+fun SignInRoute() {
+    Text("SignIN")
 }

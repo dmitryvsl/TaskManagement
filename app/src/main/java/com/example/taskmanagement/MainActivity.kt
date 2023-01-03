@@ -6,12 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.ui.Modifier
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.example.auth.navigation.authNavigationRouteGraph
-import com.example.auth.navigation.signUpRoute
 import com.example.designsystem.theme.TaskManagementTheme
 import com.example.onboarding.navigation.onboardingNavigationRoute
 import com.example.taskmanagement.navigation.TMNavHost

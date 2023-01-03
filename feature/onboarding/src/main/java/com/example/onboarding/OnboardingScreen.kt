@@ -1,9 +1,14 @@
 package com.example.onboarding
 
+import android.content.res.Configuration
+import android.util.Log
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,24 +18,40 @@ import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.Gray
+import com.example.designsystem.theme.TaskManagementTheme
+import com.example.onboarding.components.PageLandscape
+import com.example.onboarding.components.PagePortrait
 import com.example.onboarding.model.Page
 import com.example.onboarding.model.onboardPages
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 internal fun OnboardingRoute(
-    navigateToAuth: () -> Unit
+    navigateToAuth: () -> Unit,
+    navigateToSignIn: () -> Unit
 ) {
     val pagerState = rememberPagerState()
     var isLastPage by remember { mutableStateOf(false) }
     var scrollEnabled by remember { mutableStateOf(true) }
+
+    var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
+    val configuration = LocalConfiguration.current
+
+    LaunchedEffect(configuration) {
+        snapshotFlow { configuration.orientation }
+            .collect { orientation = it }
+    }
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { currentPage ->
@@ -41,36 +62,115 @@ internal fun OnboardingRoute(
         }
     }
 
+    if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+        OnboardingLandscape(
+            pagerState = pagerState,
+            isLastPage = isLastPage,
+            scrollEnabled = scrollEnabled,
+            navigateToAuth = navigateToAuth
+        )
+    else
+        OnboardingPortrait(
+            pagerState = pagerState,
+            isLastPage = isLastPage,
+            scrollEnabled = scrollEnabled,
+            navigateToAuth = navigateToAuth,
+            navigateToSignIn = navigateToSignIn
+        )
+}
+
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+private fun OnboardingPortrait(
+    pagerState: PagerState,
+    isLastPage: Boolean,
+    scrollEnabled: Boolean,
+    navigateToAuth: () -> Unit,
+    navigateToSignIn: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Remove overscroll effect
-        CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
-            HorizontalPager(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.7f)
-                    .systemBarsPadding(),
-                count = onboardPages.size,
-                state = pagerState,
-                userScrollEnabled = scrollEnabled
-            ) { page ->
-                PageUI(page = onboardPages[page])
-            }
+
+        OnboardingHorizontalPager(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.7f),
+            pagerState = pagerState,
+            scrollEnabled = scrollEnabled
+        ) { page ->
+            PagePortrait(page = onboardPages[page])
+        }
+
+        AnimatedVisibility(visible = isLastPage) {
+            GetStartedAndSignIn(
+                navigateToAuth = navigateToAuth,
+                navigateToSignIn = navigateToSignIn
+            )
         }
 
         AnimatedVisibility(visible = !isLastPage) {
-            Spacer(modifier = Modifier.weight(1f))
-            SkipAndPagerIndicator(
-                pagerState = pagerState
-            )
-        }
-        AnimatedVisibility(visible = isLastPage) {
-            GetStartedAndSignIn(navigateToAuth)
+            SkipAndPagerIndicator(pagerState)
         }
 
+    }
+}
+
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+private fun OnboardingLandscape(
+    pagerState: PagerState,
+    isLastPage: Boolean,
+    scrollEnabled: Boolean,
+    navigateToAuth: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        OnboardingHorizontalPager(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.7f),
+            pagerState = pagerState,
+            scrollEnabled = scrollEnabled
+        ) { page ->
+            PageLandscape(
+                page = onboardPages[page],
+                isLastPage = isLastPage,
+                navigateToAuth = navigateToAuth
+            )
+        }
+        AnimatedVisibility(visible = !isLastPage) {
+            Spacer(modifier = Modifier.height(48.dp))
+            SkipAndPagerIndicator(pagerState = pagerState)
+        }
+    }
+}
+
+
+@OptIn(ExperimentalPagerApi::class, ExperimentalFoundationApi::class)
+@Composable
+private fun OnboardingHorizontalPager(
+    modifier: Modifier = Modifier,
+    pagerState: PagerState,
+    scrollEnabled: Boolean,
+    content: @Composable (Int) -> Unit
+) {
+    // Remove overscroll effect
+    CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
+        HorizontalPager(
+            modifier = modifier.systemBarsPadding(),
+            count = onboardPages.size,
+            state = pagerState,
+            userScrollEnabled = scrollEnabled
+        ) { page ->
+            content(page)
+        }
     }
 }
 
@@ -117,7 +217,6 @@ private fun SkipAndPagerIndicator(
             )
         }
 
-
         HorizontalPagerIndicator(
             pagerState = pagerState,
             activeColor = MaterialTheme.colors.primary,
@@ -126,47 +225,11 @@ private fun SkipAndPagerIndicator(
     }
 }
 
-
 @Composable
-private fun PageUI(
-    page: Page
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.65f),
-            painter = painterResource(page.image),
-            contentDescription = "Onboarding image"
-        )
-
-        Spacer(modifier = Modifier.height(48.dp))
-
-        Text(
-            text = stringResource(page.title),
-            style = MaterialTheme.typography.h1,
-            color = MaterialTheme.colors.onBackground
-        )
-
-        Text(
-            text = stringResource(page.description),
-            style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.onBackground,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-@Composable
-private fun GetStartedAndSignIn(
-    navigateToAuth: () -> Unit
+internal fun GetStartedAndSignIn(
+    navigateToAuth: () -> Unit,
+    navigateToSignIn: () -> Unit,
+    showSignInLabel: Boolean = true,
 ) {
     Column(
         Modifier
@@ -190,27 +253,40 @@ private fun GetStartedAndSignIn(
             )
         }
 
-
         Spacer(modifier = Modifier.height(24.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(id = R.string.alreadyHaveAnAccount),
-                style = MaterialTheme.typography.h4,
-                color = Gray
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = stringResource(id = R.string.signIn),
-                style = MaterialTheme.typography.h3,
-                color = MaterialTheme.colors.secondary
-            )
-        }
+        if (showSignInLabel) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(id = R.string.alreadyHaveAnAccount),
+                    style = MaterialTheme.typography.h4,
+                    color = Gray
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    modifier = Modifier.clickable { navigateToSignIn() },
+                    text = stringResource(id = R.string.signIn),
+                    style = MaterialTheme.typography.h3,
+                    color = MaterialTheme.colors.secondary
+                )
+            }
 
-        Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun OnboardingScreenPortraitPreview() {
+    TaskManagementTheme {
+        OnboardingRoute(
+            navigateToAuth = {},
+            navigateToSignIn = {}
+        )
     }
 }
