@@ -3,4 +3,6 @@
     <string name="signUp">Sign Up</string>
     <string name="login">Login</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="orSignUpWith">Or sign up with</string>
 </resources>

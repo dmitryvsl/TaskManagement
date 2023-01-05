@@ -1,10 +1,10 @@
 package com.example.auth.presentation
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -12,11 +12,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -26,33 +28,123 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.auth.R
+import com.example.designsystem.components.AlreadyHaveAnAccount
 import com.example.designsystem.components.TextFieldState
+import com.example.designsystem.theme.Gray
+import com.example.designsystem.theme.LightGray
 import com.example.designsystem.theme.Red
 import com.example.designsystem.theme.White
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignUpRoute() {
-    val loginState by rememberSaveable(stateSaver = LoginStateSaver) {
-        mutableStateOf(LoginState())
-    }
-    val passwordState by rememberSaveable(stateSaver = PasswordStateSaver) {
-        mutableStateOf(PasswordState())
-    }
+    val loginState by remember { mutableStateOf(LoginState()) }
+    val passwordState: PasswordState by remember { mutableStateOf(PasswordState()) }
+    val confirmPasswordState by remember { mutableStateOf(ConfirmPasswordState(passwordState)) }
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
-            .focusable(enabled = true)
-            .systemBarsPadding(),
+            .navigationBarsPadding()
+            .imePadding()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Spacer(modifier = Modifier.weight(1f))
         SignUpLabel()
-
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(24.dp))
 
         Login(loginState = loginState)
 
-        Password(passwordState = passwordState)
+        Password(
+            passwordState = passwordState,
+            hint = R.string.password,
+        )
+
+        // Confirm password
+        Password(
+            passwordState = confirmPasswordState,
+            hint = R.string.confirm_password,
+            imeAction = ImeAction.Done,
+            onImeAction = { keyboardController?.hide() }
+        )
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium,
+            onClick = {
+                /*TODO*/
+            }
+        ) {
+            Text(
+                text = stringResource(id = R.string.signUp),
+                style = MaterialTheme.typography.h4,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Divider(color = LightGray, thickness = 2.dp)
+            Text(
+                modifier = Modifier
+                    .background(color = MaterialTheme.colors.background)
+                    .padding(horizontal = 16.dp),
+                text = stringResource(id = R.string.orSignUpWith),
+                style = MaterialTheme.typography.h4,
+                color = Gray
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        SocialRow()
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        AlreadyHaveAnAccount { }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+    }
+}
+
+@Composable
+private fun SocialRow() {
+    Row(
+        horizontalArrangement = Arrangement.Center
+    ) {
+        SocialIcon(onClick = { /*TODO*/ }, icon = R.drawable.ic_facebook)
+        Spacer(modifier = Modifier.width(16.dp))
+        SocialIcon(onClick = { /*TODO*/ }, icon = R.drawable.ic_instagram)
+        Spacer(modifier = Modifier.width(16.dp))
+        SocialIcon(onClick = { /*TODO*/ }, icon = R.drawable.ic_gmail)
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun SocialIcon(
+    onClick: () -> Unit,
+    @DrawableRes icon: Int,
+    contentDescription: String? = null,
+) {
+    Surface(
+        modifier = Modifier.size(48.dp),
+        color = LightGray,
+        shape = MaterialTheme.shapes.small,
+        onClick = onClick
+    ) {
+        Icon(
+            modifier = Modifier.padding(12.dp),
+            painter = painterResource(id = icon),
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colors.onBackground
+        )
     }
 }
 
@@ -67,7 +159,7 @@ internal fun Login(
             .fillMaxWidth()
             .shadow(
                 elevation = 2.dp,
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.medium,
             )
             .onFocusChanged { focusState ->
                 loginState.onFocusChange(focusState.isFocused)
@@ -80,7 +172,7 @@ internal fun Login(
         textStyle = MaterialTheme.typography.body2,
         singleLine = true,
         maxLines = 1,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = MaterialTheme.colors.background,
             textColor = MaterialTheme.colors.onBackground,
@@ -105,10 +197,10 @@ internal fun Login(
             imeAction = imeAction,
             keyboardType = KeyboardType.Text
         ),
-        keyboardActions = KeyboardActions(onDone = { onImeAction() })
+        keyboardActions = KeyboardActions(onDone = { onImeAction() }),
     )
     Box(
-        modifier = Modifier.height(16.dp)
+        modifier = Modifier.height(20.dp)
     ) {
         loginState.getError()?.let { error -> TextFieldError(textError = error) }
     }
@@ -116,16 +208,20 @@ internal fun Login(
 
 @Composable
 internal fun Password(
-    passwordState: TextFieldState = remember { PasswordState() }
+    modifier: Modifier = Modifier,
+    passwordState: TextFieldState = remember { PasswordState() },
+    @StringRes hint: Int,
+    imeAction: ImeAction = ImeAction.Next,
+    onImeAction: () -> Unit = {}
 ) {
     var showPassword by remember { mutableStateOf(true) }
 
     OutlinedTextField(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .shadow(
                 elevation = 2.dp,
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.medium,
                 spotColor = Red,
                 ambientColor = Red
             )
@@ -140,7 +236,7 @@ internal fun Password(
         textStyle = MaterialTheme.typography.body2,
         singleLine = true,
         maxLines = 1,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = MaterialTheme.colors.background,
             textColor = MaterialTheme.colors.onBackground,
@@ -149,7 +245,7 @@ internal fun Password(
         ),
         placeholder = {
             Text(
-                text = stringResource(id = R.string.password),
+                text = stringResource(id = hint),
                 style = MaterialTheme.typography.body2
             )
         },
@@ -164,17 +260,23 @@ internal fun Password(
         },
         trailingIcon = {
             Icon(
-                modifier = Modifier.clickable {
-                    showPassword = !showPassword
-                },
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable {
+                        showPassword = !showPassword
+                    },
                 imageVector = if (showPassword) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
                 contentDescription = null,
                 tint = MaterialTheme.colors.onBackground
             )
-        }
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = imeAction
+        ),
+        keyboardActions = KeyboardActions(onDone = { onImeAction() })
     )
     Box(
-        modifier = Modifier.height(16.dp)
+        modifier = Modifier.height(20.dp)
     ) {
         passwordState.getError()?.let { error -> TextFieldError(textError = error) }
     }
@@ -206,7 +308,7 @@ fun TextFieldError(textError: String) {
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.body2,
-            fontSize = 14.sp
+            fontSize = 12.sp
         )
     }
 }

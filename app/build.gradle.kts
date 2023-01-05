@@ -43,5 +43,6 @@ dependencies {
 
     implementation(libs.compose.activity)
     implementation(libs.compose.navigation)
-    implementation(libs.compose.material3.windowsizeclass)
+
+
 }

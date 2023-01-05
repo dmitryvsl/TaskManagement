@@ -1,6 +1,7 @@
 package com.example.taskmanagement
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         (application as App).component.inject(this)
-
         setContent {
             TaskManagementTheme {
                 Surface(

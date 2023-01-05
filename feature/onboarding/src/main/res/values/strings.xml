@@ -7,6 +7,4 @@
     <string name="description3">It has been easier to complete tasks.</string>
     <string name="skip">Skip</string>
     <string name="getStarted">Get Started</string>
-    <string name="alreadyHaveAnAccount">Already have an account?</string>
-    <string name="signIn">Sign In</string>
 </resources>

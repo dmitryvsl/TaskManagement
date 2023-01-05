@@ -31,5 +31,3 @@ private fun passwordValidationError(password: String) =
 
 private fun passwordConfirmationError(): String = "Passwords don't match"
 
-
-val PasswordStateSaver = textFieldStateSaver(PasswordState())
