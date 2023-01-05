@@ -10,7 +10,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import com.example.auth.navigation.authNavigationRouteGraph
+import com.example.auth.presentation.navigation.authNavigationRouteGraph
 import com.example.designsystem.theme.TaskManagementTheme
 import com.example.onboarding.navigation.onboardingNavigationRoute
 import com.example.taskmanagement.navigation.TMNavHost

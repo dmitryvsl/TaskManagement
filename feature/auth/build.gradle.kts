@@ -12,4 +12,5 @@ dependencies {
     implementation(project(":core:designsystem"))
 
     implementation(libs.compose.navigation)
+    implementation(libs.compose.material.icons.extended)
 }

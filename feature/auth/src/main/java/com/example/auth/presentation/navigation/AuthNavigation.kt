@@ -1,4 +1,4 @@
-package com.example.auth.navigation
+package com.example.auth.presentation.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -6,13 +6,14 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.auth.SignInRoute
+import com.example.auth.presentation.SignUpRoute
 
 
 const val authNavigationRouteGraph = "auth_graph"
 private const val signUpRoute = "auth_route"
 private const val signInRoute = "signin_route"
-fun NavController.navigateToAuth(navOptions: NavOptions? = null){
-    this.navigate(authNavigationRouteGraph, navOptions)
+fun NavController.navigateToSignUp(navOptions: NavOptions? = null){
+    this.navigate(signUpRoute, navOptions)
 }
 
 fun NavController.navigateToSignIn(navOptions: NavOptions? = null){

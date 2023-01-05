@@ -7,10 +7,10 @@ import com.example.onboarding.OnboardingRoute
 const val onboardingNavigationRoute = "onboarding_route"
 
 fun NavGraphBuilder.onboardingScreen(
-    navigateToAuth: () -> Unit,
+    navigateToSignUp: () -> Unit,
     navigateToSignIn: () -> Unit
 ) {
     composable(route = onboardingNavigationRoute) {
-        OnboardingRoute(navigateToAuth = navigateToAuth, navigateToSignIn = navigateToSignIn)
+        OnboardingRoute(navigateToSignUp = navigateToSignUp, navigateToSignIn = navigateToSignIn)
     }
 }
