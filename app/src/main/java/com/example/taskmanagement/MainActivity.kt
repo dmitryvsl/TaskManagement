@@ -1,23 +1,23 @@
 package com.example.taskmanagement
 
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import com.example.auth.presentation.navigation.authNavigationRouteGraph
+import com.example.auth.navigation.authNavigationRouteGraph
 import com.example.designsystem.theme.TaskManagementTheme
 import com.example.onboarding.navigation.onboardingNavigationRoute
 import com.example.taskmanagement.navigation.TMNavHost
 import com.example.taskmanagement.utils.SharedPreferencesUtils
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        (application as App).component.inject(this)
+
         setContent {
             TaskManagementTheme {
                 Surface(

@@ -9,7 +9,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager){
                 apply("taskmanagement.android.library")
-                apply("taskmanagement.dagger")
+                apply("taskmanagement.android.hilt")
             }
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")

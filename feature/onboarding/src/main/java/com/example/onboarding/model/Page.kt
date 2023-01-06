@@ -2,7 +2,7 @@ package com.example.onboarding.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.example.onboarding.R
+import com.example.feature.onboarding.R
 
 data class Page(
     @StringRes val title: Int,

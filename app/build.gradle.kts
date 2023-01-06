@@ -1,7 +1,8 @@
 plugins {
     id("taskmanagement.android.application")
     id("taskmanagement.android.application.compose")
-    id("taskmanagement.dagger")
+    id("taskmanagement.android.hilt")
+    id("com.google.gms.google-services")
 }
 
 android {

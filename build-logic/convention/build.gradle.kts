@@ -33,13 +33,9 @@ gradlePlugin {
             id = "taskmanagement.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
-        register("androidDagger") {
-            id = "taskmanagement.dagger"
-            implementationClass = "AndroidDaggerConventionPlugin"
-        }
-        register("androidFirebase") {
-            id = "taskmanagement.android.firebase"
-            implementationClass = "AndroidFirebaseConventionPlugin"
+        register("androidHilt") {
+            id = "taskmanagement.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
         }
 
     }

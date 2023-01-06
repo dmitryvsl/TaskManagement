@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.components.AlreadyHaveAnAccount
 import com.example.designsystem.theme.Gray
+import com.example.feature.onboarding.R
 import com.example.onboarding.model.Page
 import com.example.onboarding.model.onboardPages
 import com.google.accompanist.pager.*
