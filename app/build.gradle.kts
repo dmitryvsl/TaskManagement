@@ -37,6 +37,7 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
+    implementation(project(":core:data"))
 
     //features
     implementation(project(":feature:onboarding"))
@@ -44,6 +45,7 @@ dependencies {
 
     implementation(libs.compose.activity)
     implementation(libs.compose.navigation)
+    implementation(libs.rxjava)
 
 
 }

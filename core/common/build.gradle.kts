@@ -1,6 +1,7 @@
 plugins {
     id("taskmanagement.android.library")
     id("taskmanagement.android.hilt")
+    id("taskmanagement.android.library.compose")
 }
 
 android {
@@ -8,5 +9,6 @@ android {
 }
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:designsystem"))
     implementation(libs.android.annotation)
 }

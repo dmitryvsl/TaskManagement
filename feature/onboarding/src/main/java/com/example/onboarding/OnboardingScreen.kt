@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.designsystem.components.AlreadyHaveAnAccount
+import com.example.common.components.AlreadyHaveAnAccount
 import com.example.designsystem.theme.Gray
 import com.example.feature.onboarding.R
 import com.example.onboarding.model.Page

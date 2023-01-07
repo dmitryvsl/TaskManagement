@@ -8,12 +8,12 @@ import com.example.auth.navigation.authGraph
 import com.example.auth.navigation.authNavigationRouteGraph
 import com.example.auth.navigation.navigateToSignIn
 import com.example.auth.navigation.navigateToSignUp
+import com.example.data.utils.NetworkMonitor
 import com.example.onboarding.navigation.onboardingScreen
 
 @Composable
 fun TMNavHost(
     navController: NavHostController,
-    onBackClick: () -> Unit,
     onOnboardingPassed: () -> Unit,
     modifier: Modifier = Modifier,
     startDestination: String = authNavigationRouteGraph
@@ -33,14 +33,17 @@ fun TMNavHost(
                 navController.navigateToSignIn()
             }
         )
-        authGraph()
+        authGraph(
+            navController = navController,
+            modifier = modifier
+        )
     }
 }
 
 private fun onNavigateFromOnboardingScreen(
     onOnboardingPassed: () -> Unit,
     navController: NavHostController
-){
+) {
     onOnboardingPassed()
     navController.backQueue.removeLast()
 }

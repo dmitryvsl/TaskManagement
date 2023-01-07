@@ -11,6 +11,7 @@ android {
 dependencies {
 
     implementation(project(":core:designsystem"))
+    implementation(project(":core:common"))
 
     implementation(libs.compose.navigation)
     implementation(libs.accompanist.pager)

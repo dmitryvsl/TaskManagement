@@ -12,7 +12,7 @@ class SharedPreferencesUtils @Inject constructor(
 
     fun isFirstLaunch(): Boolean = sharedPreferences.getBoolean(isFirstLaunch, true)
 
-    fun markNotFirstLaunch() {
+    fun markOnboardingPassed() {
         with(sharedPreferences.edit()) {
             putBoolean(isFirstLaunch, false)
             apply()

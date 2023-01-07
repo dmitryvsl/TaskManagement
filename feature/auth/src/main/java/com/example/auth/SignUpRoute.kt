@@ -1,5 +1,6 @@
 package com.example.auth
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.*
@@ -10,15 +11,18 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -28,29 +32,66 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.designsystem.components.AlreadyHaveAnAccount
-import com.example.designsystem.components.TextFieldState
-import com.example.designsystem.theme.Gray
-import com.example.designsystem.theme.LightGray
-import com.example.designsystem.theme.Red
-import com.example.designsystem.theme.White
+import com.example.common.components.AlreadyHaveAnAccount
+import com.example.common.components.Overlay
+import com.example.common.components.TextFieldError
+import com.example.common.components.TextFieldState
+import com.example.designsystem.theme.*
+import com.example.domain.exception.NoInternetException
+import com.example.domain.exception.UserAlreadyExist
+import com.example.domain.exception.UserCreationException
 import com.example.feature.auth.R
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignUpRoute(
+    onSignInClick: () -> Unit,
+    onSignUp: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val loginState by remember { mutableStateOf(LoginState()) }
     val passwordState: PasswordState by remember { mutableStateOf(PasswordState()) }
     val confirmPasswordState by remember { mutableStateOf(ConfirmPasswordState(passwordState)) }
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+
+    val loading by viewModel.loading.observeAsState(initial = false)
+    val error by viewModel.error.observeAsState()
+    val user by viewModel.user.observeAsState()
+
+
+    LaunchedEffect(user) {
+        if (user != null) onSignUp()
+    }
+
+    val onErrorCloseClick: () -> Unit = { viewModel.clearError() }
+
+    error?.let { e ->
+        when (e) {
+            is UserCreationException ->
+                ErrorOverlay(message = stringResource(R.string.userCreateError)) { onErrorCloseClick() }
+
+            is UserAlreadyExist ->
+                ErrorOverlay(message = stringResource(R.string.userAlreadyExist)) { onErrorCloseClick() }
+
+            is NoInternetException ->
+                ErrorOverlay(message = stringResource(R.string.noInternetConnection)) { onErrorCloseClick() }
+            else ->
+                ErrorOverlay(message = stringResource(R.string.someErrorOccured)) { onErrorCloseClick() }
+        }
+    }
+
+    if (loading) LoadingOverlay {
+        viewModel.cancelUserCreation()
+    }
+
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures(
@@ -64,7 +105,9 @@ fun SignUpRoute(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.weight(1f))
+
         SignUpLabel()
+
         Spacer(Modifier.height(24.dp))
 
         Email(loginState = loginState)
@@ -85,8 +128,10 @@ fun SignUpRoute(
         Button(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
+            enabled = loginState.isValid && passwordState.isValid && confirmPasswordState.isValid,
             onClick = {
-                /*TODO*/
+                keyboardController?.hide()
+                viewModel.createUser(loginState.text, passwordState.text)
             }
         ) {
             Text(
@@ -97,66 +142,10 @@ fun SignUpRoute(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Divider(color = LightGray, thickness = 2.dp)
-            Text(
-                modifier = Modifier
-                    .background(color = MaterialTheme.colors.background)
-                    .padding(horizontal = 16.dp),
-                text = stringResource(id = R.string.orSignUpWith),
-                style = MaterialTheme.typography.h4,
-                color = Gray
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        SocialRow()
+        AlreadyHaveAnAccount { onSignInClick() }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        AlreadyHaveAnAccount { }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-    }
-}
-
-@Composable
-private fun SocialRow() {
-    Row(
-        horizontalArrangement = Arrangement.Center
-    ) {
-        SocialIcon(onClick = { /*TODO*/ }, icon = R.drawable.ic_facebook)
-        Spacer(modifier = Modifier.width(16.dp))
-        SocialIcon(onClick = { /*TODO*/ }, icon = R.drawable.ic_instagram)
-        Spacer(modifier = Modifier.width(16.dp))
-        SocialIcon(onClick = { /*TODO*/ }, icon = R.drawable.ic_gmail)
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun SocialIcon(
-    onClick: () -> Unit,
-    @DrawableRes icon: Int,
-    contentDescription: String? = null,
-) {
-    Surface(
-        modifier = Modifier.size(48.dp),
-        color = LightGray,
-        shape = MaterialTheme.shapes.small,
-        onClick = onClick
-    ) {
-        Icon(
-            modifier = Modifier.padding(12.dp),
-            painter = painterResource(id = icon),
-            contentDescription = contentDescription,
-            tint = MaterialTheme.colors.onBackground
-        )
     }
 }
 
@@ -312,15 +301,69 @@ private fun SignUpLabel() {
 }
 
 @Composable
-fun TextFieldError(textError: String) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = textError,
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.error,
-            style = MaterialTheme.typography.body2,
-            fontSize = 12.sp
-        )
+fun LoadingOverlay(
+    onCancelClick: () -> Unit,
+) {
+    Overlay {
+        Surface(
+            modifier = Modifier.size(200.dp),
+            color = MaterialTheme.colors.background,
+            shape = MaterialTheme.shapes.large,
+            elevation = 4.dp,
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    strokeWidth = 4.dp,
+                    color = MaterialTheme.colors.secondary
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .clickable { onCancelClick() }
+                        .padding(12.dp),
+                    imageVector = Icons.Outlined.Close,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.secondary
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ErrorOverlay(
+    message: String,
+    onCloseClick: () -> Unit
+) {
+    Overlay {
+        Surface(
+            shape = MaterialTheme.shapes.large,
+            elevation = 4.dp,
+            color = MaterialTheme.colors.background
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onBackground,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = { onCloseClick() }) {
+                    Text(
+                        text = stringResource(id = R.string.close),
+                        style = MaterialTheme.typography.body2
+                    )
+                }
+            }
+        }
     }
 }

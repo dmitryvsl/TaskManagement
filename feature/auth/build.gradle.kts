@@ -12,8 +12,10 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":core:common"))
 
     implementation(libs.compose.navigation)
+    implementation(libs.compose.livedata)
     implementation(libs.compose.hilt.navigation)
     implementation(libs.compose.material.icons.extended)
 

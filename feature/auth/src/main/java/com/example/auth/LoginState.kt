@@ -1,6 +1,6 @@
 package com.example.auth
 
-import com.example.designsystem.components.TextFieldState
+import com.example.common.components.TextFieldState
 
 class LoginState : TextFieldState(::isLoginValid, ::loginValidationError)
 
