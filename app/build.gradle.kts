@@ -40,7 +40,6 @@ dependencies {
     implementation(project(":core:data"))
 
     //features
-    implementation(project(":feature:onboarding"))
     implementation(project(":feature:auth"))
 
     implementation(libs.compose.activity)

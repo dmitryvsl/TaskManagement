@@ -1,5 +1,6 @@
 package com.example.common.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -10,13 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.core.common.R
 import com.example.designsystem.theme.Gray
 
 
 @Composable
-fun AlreadyHaveAnAccount(
-    onSignInClick: () -> Unit,
+fun AuthOtherWay(
+    @StringRes hint: Int,
+    @StringRes authWayName: Int,
+    onAuthWayClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -24,7 +26,7 @@ fun AlreadyHaveAnAccount(
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(id = R.string.alreadyHaveAnAccount),
+            text = stringResource(id = hint),
             style = MaterialTheme.typography.h4,
             color = Gray
         )
@@ -32,8 +34,8 @@ fun AlreadyHaveAnAccount(
         Text(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
-                .clickable { onSignInClick() },
-            text = stringResource(id = R.string.signIn),
+                .clickable { onAuthWayClick() },
+            text = stringResource(id = authWayName),
             style = MaterialTheme.typography.h3,
             color = MaterialTheme.colors.secondary
         )

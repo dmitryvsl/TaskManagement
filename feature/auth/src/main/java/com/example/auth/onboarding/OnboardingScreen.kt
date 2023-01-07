@@ -1,4 +1,4 @@
-package com.example.onboarding
+package com.example.auth.onboarding
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.*
@@ -15,11 +15,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.common.components.AlreadyHaveAnAccount
+import com.example.common.components.AuthOtherWay
 import com.example.designsystem.theme.Gray
-import com.example.feature.onboarding.R
-import com.example.onboarding.model.Page
-import com.example.onboarding.model.onboardPages
+import com.example.auth.onboarding.model.Page
+import com.example.auth.onboarding.model.onboardPages
+import com.example.feature.auth.R
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 
@@ -194,7 +194,11 @@ private fun GetStartedAndSignIn(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        AlreadyHaveAnAccount { navigateToSignIn() }
+        AuthOtherWay(
+            hint = R.string.alreadyHaveAnAccount,
+            authWayName = R.string.signIn,
+            onAuthWayClick = navigateToSignIn
+        )
 
         Spacer(modifier = Modifier.width(8.dp))
     }

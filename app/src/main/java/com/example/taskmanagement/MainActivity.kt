@@ -11,10 +11,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import com.example.auth.navigation.authNavigationRouteGraph
 import com.example.data.utils.NetworkMonitor
 import com.example.designsystem.theme.TaskManagementTheme
-import com.example.onboarding.navigation.onboardingNavigationRoute
 import com.example.taskmanagement.navigation.TMNavHost
 import com.example.taskmanagement.utils.SharedPreferencesUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,11 +28,8 @@ class MainActivity : ComponentActivity() {
     lateinit var networkMonitor: NetworkMonitor
 
     private val isOnline: MutableState<Boolean> = mutableStateOf(true)
-    private val disposable by lazy (LazyThreadSafetyMode.NONE){
-        networkMonitor.isOnline.subscribe{isOnline ->
-            Log.d("TAG", "isOnline: $isOnline")
-            this.isOnline.value = isOnline
-        }
+    private val disposable by lazy(LazyThreadSafetyMode.NONE) {
+        networkMonitor.isOnline.subscribe { isOnline -> this.isOnline.value = isOnline }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +54,8 @@ class MainActivity : ComponentActivity() {
                         TMNavHost(
                             modifier = Modifier.padding(paddingValues),
                             navController = navController,
+                            shouldShowOnboarding = sharedPreferencesUtils.isFirstLaunch(),
                             onOnboardingPassed = { sharedPreferencesUtils.markOnboardingPassed() },
-                            startDestination = defineStartDestination()
                         )
                     }
 
@@ -72,10 +67,5 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         disposable.dispose()
         super.onDestroy()
-    }
-
-    private fun defineStartDestination(): String {
-        if (!sharedPreferencesUtils.isFirstLaunch()) return authNavigationRouteGraph
-        return onboardingNavigationRoute
     }
 }

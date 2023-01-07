@@ -6,9 +6,22 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="orSignUpWith">Or sign up with</string>
     <string name="close">Close</string>
-
     <string name="userCreateError">Oops, error occurred while creating user</string>
     <string name="someErrorOccured">Some error occurred. Please, try again</string>
     <string name="userAlreadyExist">The email address is already in use by another account.</string>
     <string name="noInternetConnection">No internet connection</string>
+    <string name="forgotPassword">Forgot password ?</string>
+    <string name="alreadyHaveAnAccount">Already have an account?</string>
+    <string name="signIn">Sign In</string>
+    <string name="dontHaveAccount">Don\'t have an account?</string>
+
+<!--    Onboarding -->
+    <string name="title1">Welcome!</string>
+    <string name="description1">Do you want to clear task super fast with Mane?</string>
+    <string name="title2">Many functions to choose</string>
+    <string name="description2">Easily arrange work order for you to manage.</string>
+    <string name="title3">Get started with us!</string>
+    <string name="description3">It has been easier to complete tasks.</string>
+    <string name="skip">Skip</string>
+    <string name="getStarted">Get Started</string>
 </resources>

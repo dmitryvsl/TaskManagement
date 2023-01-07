@@ -1,8 +1,8 @@
-package com.example.onboarding.model
+package com.example.auth.onboarding.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.example.feature.onboarding.R
+import com.example.feature.auth.R
 
 data class Page(
     @StringRes val title: Int,

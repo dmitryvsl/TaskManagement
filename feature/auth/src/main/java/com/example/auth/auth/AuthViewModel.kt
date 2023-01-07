@@ -1,4 +1,4 @@
-package com.example.auth
+package com.example.auth.auth
 
 import android.util.Log
 import androidx.lifecycle.LiveData

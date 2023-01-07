@@ -1,10 +1,8 @@
-package com.example.auth
+package com.example.auth.auth
 
-import android.util.Log
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -15,17 +13,11 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -34,124 +26,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.common.components.AlreadyHaveAnAccount
 import com.example.common.components.Overlay
 import com.example.common.components.TextFieldError
 import com.example.common.components.TextFieldState
-import com.example.designsystem.theme.*
-import com.example.domain.exception.NoInternetException
-import com.example.domain.exception.UserAlreadyExist
-import com.example.domain.exception.UserCreationException
+import com.example.designsystem.theme.Red
+import com.example.designsystem.theme.White
 import com.example.feature.auth.R
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun SignUpRoute(
-    onSignInClick: () -> Unit,
-    onSignUp: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: AuthViewModel = hiltViewModel()
-) {
-    val loginState by remember { mutableStateOf(LoginState()) }
-    val passwordState: PasswordState by remember { mutableStateOf(PasswordState()) }
-    val confirmPasswordState by remember { mutableStateOf(ConfirmPasswordState(passwordState)) }
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    val loading by viewModel.loading.observeAsState(initial = false)
-    val error by viewModel.error.observeAsState()
-    val user by viewModel.user.observeAsState()
-
-
-    LaunchedEffect(user) {
-        if (user != null) onSignUp()
-    }
-
-    val onErrorCloseClick: () -> Unit = { viewModel.clearError() }
-
-    error?.let { e ->
-        when (e) {
-            is UserCreationException ->
-                ErrorOverlay(message = stringResource(R.string.userCreateError)) { onErrorCloseClick() }
-
-            is UserAlreadyExist ->
-                ErrorOverlay(message = stringResource(R.string.userAlreadyExist)) { onErrorCloseClick() }
-
-            is NoInternetException ->
-                ErrorOverlay(message = stringResource(R.string.noInternetConnection)) { onErrorCloseClick() }
-            else ->
-                ErrorOverlay(message = stringResource(R.string.someErrorOccured)) { onErrorCloseClick() }
-        }
-    }
-
-    if (loading) LoadingOverlay {
-        viewModel.cancelUserCreation()
-    }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = { focusManager.clearFocus() }
-                )
-            }
-            .navigationBarsPadding()
-            .imePadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Spacer(modifier = Modifier.weight(1f))
-
-        SignUpLabel()
-
-        Spacer(Modifier.height(24.dp))
-
-        Email(loginState = loginState)
-
-        Password(
-            passwordState = passwordState,
-            hint = R.string.password,
-        )
-
-        // Confirm password
-        Password(
-            passwordState = confirmPasswordState,
-            hint = R.string.confirm_password,
-            imeAction = ImeAction.Done,
-            onImeAction = { keyboardController?.hide() }
-        )
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            enabled = loginState.isValid && passwordState.isValid && confirmPasswordState.isValid,
-            onClick = {
-                keyboardController?.hide()
-                viewModel.createUser(loginState.text, passwordState.text)
-            }
-        ) {
-            Text(
-                text = stringResource(id = R.string.signUp),
-                style = MaterialTheme.typography.h4,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        AlreadyHaveAnAccount { onSignInClick() }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-    }
-}
 
 @Composable
 internal fun Email(
-    loginState: TextFieldState = remember { LoginState() },
+    emailState: TextFieldState = remember { EmailState() },
     imeAction: ImeAction = ImeAction.Next,
     onImeAction: () -> Unit = {}
 ) {
@@ -163,13 +48,13 @@ internal fun Email(
                 shape = MaterialTheme.shapes.medium,
             )
             .onFocusChanged { focusState ->
-                loginState.onFocusChange(focusState.isFocused)
+                emailState.onFocusChange(focusState.isFocused)
                 if (!focusState.isFocused) {
-                    loginState.enableShowErrors()
+                    emailState.enableShowErrors()
                 }
             },
-        value = loginState.text,
-        onValueChange = { loginState.text = it },
+        value = emailState.text,
+        onValueChange = { emailState.text = it },
         textStyle = MaterialTheme.typography.body2,
         singleLine = true,
         maxLines = 1,
@@ -186,7 +71,7 @@ internal fun Email(
                 style = MaterialTheme.typography.body2
             )
         },
-        isError = loginState.showErrors(),
+        isError = emailState.showErrors(),
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_account),
@@ -203,7 +88,7 @@ internal fun Email(
     Box(
         modifier = Modifier.height(20.dp)
     ) {
-        loginState.getError()?.let { error -> TextFieldError(textError = error) }
+        emailState.getError()?.let { error -> TextFieldError(textError = error) }
     }
 }
 
@@ -284,12 +169,14 @@ internal fun Password(
 }
 
 @Composable
-private fun SignUpLabel() {
+internal fun AuthHeader(
+    @StringRes label: Int
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(id = R.string.signUp),
+            text = stringResource(id = label),
             style = MaterialTheme.typography.h1
         )
         Spacer(modifier = Modifier.width(4.dp))
@@ -300,8 +187,9 @@ private fun SignUpLabel() {
     }
 }
 
+
 @Composable
-fun LoadingOverlay(
+internal fun LoadingOverlay(
     onCancelClick: () -> Unit,
 ) {
     Overlay {
@@ -335,7 +223,7 @@ fun LoadingOverlay(
 }
 
 @Composable
-fun ErrorOverlay(
+internal fun ErrorOverlay(
     message: String,
     onCloseClick: () -> Unit
 ) {
