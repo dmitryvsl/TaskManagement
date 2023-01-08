@@ -1,11 +1,7 @@
 package com.example.taskmanagement
 
 import android.app.Application
-import com.example.taskmanagement.di.DaggerAppComponent
+import dagger.hilt.android.HiltAndroidApp
 
-class App : Application() {
-
-    val component by lazy(LazyThreadSafetyMode.NONE){
-        DaggerAppComponent.create()
-    }
-}
+@HiltAndroidApp
+class App : Application() {}

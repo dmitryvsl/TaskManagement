@@ -1,29 +1,32 @@
 package com.example.taskmanagement.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.auth.navigation.authGraph
-import com.example.auth.navigation.navigateToAuth
-import com.example.onboarding.navigation.onboardingNavigationRoute
-import com.example.onboarding.navigation.onboardingScreen
+import com.example.auth.navigation.authNavigationRouteGraph
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TMNavHost(
     navController: NavHostController,
-    onBackClick: () -> Unit,
+    onOnboardingPassed: () -> Unit,
+    shouldShowOnboarding: Boolean,
     modifier: Modifier = Modifier,
-    startDestination: String = onboardingNavigationRoute
-){
-    NavHost(
+) {
+    AnimatedNavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = authNavigationRouteGraph,
         modifier = modifier
-    ){
-        onboardingScreen{
-            navController.navigateToAuth()
-        }
-        authGraph()
+    ) {
+        authGraph(
+            navController = navController,
+            shouldShowOnboarding = shouldShowOnboarding,
+            modifier = modifier,
+            onOnboardingPassed = onOnboardingPassed
+        )
     }
 }

@@ -12,7 +12,8 @@ private val DarkColorPalette = darkColors(
     secondary = Orange,
     onSecondary = White,
     background = Dark,
-    onBackground = White
+    onBackground = White,
+    error = Red
 )
 
 private val LightColorPalette = lightColors(
@@ -21,7 +22,8 @@ private val LightColorPalette = lightColors(
     secondary = Orange,
     onSecondary = White,
     background = White,
-    onBackground = Dark
+    onBackground = Black,
+    error = Red
 
 )
 

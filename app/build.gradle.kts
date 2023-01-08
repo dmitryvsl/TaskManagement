@@ -1,7 +1,8 @@
 plugins {
     id("taskmanagement.android.application")
     id("taskmanagement.android.application.compose")
-    id("taskmanagement.dagger")
+    id("taskmanagement.android.hilt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -36,11 +37,18 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
+    implementation(project(":core:data"))
 
     //features
-    implementation(project(":feature:onboarding"))
     implementation(project(":feature:auth"))
 
+    //Compose
     implementation(libs.compose.activity)
-    implementation(libs.compose.navigation)
+
+    //RxJava
+    implementation(libs.rxjava)
+
+    // Accompanist
+    implementation(libs.accompanist.systemui)
+    implementation(libs.accompanist.navigation)
 }
