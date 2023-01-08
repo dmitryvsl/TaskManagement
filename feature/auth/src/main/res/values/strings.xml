@@ -14,6 +14,9 @@
     <string name="alreadyHaveAnAccount">Already have an account?</string>
     <string name="signIn">Sign In</string>
     <string name="dontHaveAccount">Don\'t have an account?</string>
+    <string name="invalidEmailOrPassword">Invalid Email or Password</string>
+    <string name="enterYourEmailToResetPassword">Enter your email then we will send you sms to reset new password.</string>
+    <string name="sendEmail">Send Email</string>
 
 <!--    Onboarding -->
     <string name="title1">Welcome!</string>
@@ -24,4 +27,8 @@
     <string name="description3">It has been easier to complete tasks.</string>
     <string name="skip">Skip</string>
     <string name="getStarted">Get Started</string>
+    <string name="invalidEmail">Invalid Email address</string>
+    <string name="enteredEmailDoesntExist">User with this email does not exist</string>
+    <string name="messageWasSentToYourEmail">Message was sent to your email address</string>
+
 </resources>

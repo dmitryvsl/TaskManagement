@@ -42,9 +42,13 @@ dependencies {
     //features
     implementation(project(":feature:auth"))
 
+    //Compose
     implementation(libs.compose.activity)
-    implementation(libs.compose.navigation)
+
+    //RxJava
     implementation(libs.rxjava)
 
-
+    // Accompanist
+    implementation(libs.accompanist.systemui)
+    implementation(libs.accompanist.navigation)
 }

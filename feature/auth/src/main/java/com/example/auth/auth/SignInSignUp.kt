@@ -1,5 +1,6 @@
 package com.example.auth.auth
 
+import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -10,9 +11,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,24 +32,38 @@ import androidx.compose.ui.unit.dp
 import com.example.common.components.Overlay
 import com.example.common.components.TextFieldError
 import com.example.common.components.TextFieldState
-import com.example.designsystem.theme.Red
+import com.example.common.extension.drawColoredShadow
+import com.example.designsystem.theme.Dark
 import com.example.designsystem.theme.White
+import com.example.domain.exception.*
 import com.example.feature.auth.R
 
 
+/**
+ * Textfield for entering email
+ */
 @Composable
 internal fun Email(
+    modifier: Modifier = Modifier,
     emailState: TextFieldState = remember { EmailState() },
     imeAction: ImeAction = ImeAction.Next,
     onImeAction: () -> Unit = {}
 ) {
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(
+    val mediumShape = MaterialTheme.shapes.medium
+    val colorModifier = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+            modifier.drawColoredShadow(color = Dark)
+        else
+            modifier.shadow(
                 elevation = 2.dp,
-                shape = MaterialTheme.shapes.medium,
+                shape = mediumShape,
+                spotColor = Dark.copy(alpha = 0.92f),
+                ambientColor = Dark.copy(alpha = 0.92f),
             )
+    }
+    OutlinedTextField(
+        modifier = colorModifier
+            .fillMaxWidth()
             .onFocusChanged { focusState ->
                 emailState.onFocusChange(focusState.isFocused)
                 if (!focusState.isFocused) {
@@ -74,7 +91,7 @@ internal fun Email(
         isError = emailState.showErrors(),
         leadingIcon = {
             Icon(
-                painter = painterResource(id = R.drawable.ic_account),
+                imageVector = Icons.Outlined.Mail,
                 contentDescription = null,
                 tint = MaterialTheme.colors.onBackground
             )
@@ -86,12 +103,15 @@ internal fun Email(
         keyboardActions = KeyboardActions(onDone = { onImeAction() }),
     )
     Box(
-        modifier = Modifier.height(20.dp)
+        modifier = modifier.height(20.dp)
     ) {
         emailState.getError()?.let { error -> TextFieldError(textError = error) }
     }
 }
 
+/**
+ * Textfield for entering password
+ */
 @Composable
 internal fun Password(
     modifier: Modifier = Modifier,
@@ -101,16 +121,21 @@ internal fun Password(
     onImeAction: () -> Unit = {}
 ) {
     var showPassword by remember { mutableStateOf(true) }
-
-    OutlinedTextField(
-        modifier = modifier
-            .fillMaxWidth()
-            .shadow(
+    val mediumShape = MaterialTheme.shapes.medium
+    val colorModifier = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+            modifier.drawColoredShadow(color = Dark)
+        else
+            modifier.shadow(
                 elevation = 2.dp,
-                shape = MaterialTheme.shapes.medium,
-                spotColor = Red,
-                ambientColor = Red
+                shape = mediumShape,
+                spotColor = Dark.copy(alpha = 0.92f),
+                ambientColor = Dark.copy(alpha = 0.92f),
             )
+    }
+    OutlinedTextField(
+        modifier = colorModifier
+            .fillMaxWidth()
             .onFocusChanged { focusState ->
                 passwordState.onFocusChange(focusState.isFocused)
                 if (!focusState.isFocused) {
@@ -162,24 +187,30 @@ internal fun Password(
         keyboardActions = KeyboardActions(onDone = { onImeAction() })
     )
     Box(
-        modifier = Modifier.height(20.dp)
+        modifier = modifier.height(20.dp)
     ) {
         passwordState.getError()?.let { error -> TextFieldError(textError = error) }
     }
 }
 
+
+/**
+ * Header with Icon
+ */
 @Composable
 internal fun AuthHeader(
+    modifier: Modifier = Modifier,
     @StringRes label: Int
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = stringResource(id = label),
             style = MaterialTheme.typography.h1
         )
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(8.dp))
         Image(
             painter = painterResource(id = R.drawable.ic_signup),
             contentDescription = null
@@ -187,7 +218,9 @@ internal fun AuthHeader(
     }
 }
 
-
+/**
+ * Occupy all screen with transparent overlay and show Progress bar and cancel Icon
+ */
 @Composable
 internal fun LoadingOverlay(
     onCancelClick: () -> Unit,
@@ -222,8 +255,11 @@ internal fun LoadingOverlay(
     }
 }
 
+/**
+ * Occupy all screen with transparent overlay and show message
+ */
 @Composable
-internal fun ErrorOverlay(
+internal fun InformationOverlay(
     message: String,
     onCloseClick: () -> Unit
 ) {
@@ -234,7 +270,7 @@ internal fun ErrorOverlay(
             color = MaterialTheme.colors.background
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -253,5 +289,48 @@ internal fun ErrorOverlay(
                 }
             }
         }
+    }
+}
+
+
+/**
+ * Represent Data state: Loading, Error, Success. Show information dialogs according to state
+ */
+@Composable
+fun CallStateRepresenter(
+    viewModel: BaseAuthViewModel,
+    onCallSuccess: () -> Unit,
+    noInternetExceptionMessage: String = stringResource(R.string.noInternetConnection),
+    invalidEmailOrPasswordExceptionMessage: String = stringResource(R.string.invalidEmailOrPassword),
+    userAuthExceptionMessage: String = stringResource(R.string.userCreateError),
+    userAlreadyExistMessage: String = stringResource(R.string.userAlreadyExist),
+    userNotExistMessage: String = stringResource(R.string.enteredEmailDoesntExist),
+    undefinedExceptionMessage: String = stringResource(R.string.someErrorOccured)
+) {
+    val loading by viewModel.loading.observeAsState(false)
+    val error by viewModel.error.observeAsState()
+    val isCallSuccess by viewModel.isCallSuccess.observeAsState(false)
+
+    val onError: @Composable (message: String) -> Unit = { message ->
+        InformationOverlay(message = message) { viewModel.clearError() }
+    }
+
+    LaunchedEffect(isCallSuccess) {
+        if (isCallSuccess) onCallSuccess()
+    }
+
+    error?.let { e ->
+        when (e) {
+            is NoInternetException -> onError(noInternetExceptionMessage)
+            is InvalidEmailOrPasswordException -> onError(invalidEmailOrPasswordExceptionMessage)
+            is UserAuthException -> onError(userAuthExceptionMessage)
+            is UserAlreadyExist -> onError(userAlreadyExistMessage)
+            is UserNotExist -> onError(userNotExistMessage)
+            else -> onError(undefinedExceptionMessage)
+        }
+    }
+
+    if (loading) LoadingOverlay {
+        viewModel.cancelUserCreation()
     }
 }

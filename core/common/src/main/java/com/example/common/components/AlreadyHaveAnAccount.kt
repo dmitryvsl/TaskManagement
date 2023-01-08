@@ -16,12 +16,13 @@ import com.example.designsystem.theme.Gray
 
 @Composable
 fun AuthOtherWay(
+    modifier: Modifier = Modifier,
     @StringRes hint: Int,
     @StringRes authWayName: Int,
     onAuthWayClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {

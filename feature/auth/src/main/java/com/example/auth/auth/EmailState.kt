@@ -8,4 +8,4 @@ class EmailState : TextFieldState(::isLoginValid, ::loginValidationError)
 
 private fun isLoginValid(email: String) = Pattern.matches(EMAIL_VALIDATION_REGEX, email)
 
-private fun loginValidationError(login: String): String = "Invalid login"
+private fun loginValidationError(login: String): String = "Invalid email"

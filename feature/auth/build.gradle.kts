@@ -15,7 +15,6 @@ dependencies {
     implementation(project(":core:common"))
 
     // Compose
-    implementation(libs.compose.navigation)
     implementation(libs.compose.livedata)
     implementation(libs.compose.hilt.navigation)
     implementation(libs.compose.material.icons.extended)
@@ -23,6 +22,8 @@ dependencies {
     //Accompanist
     implementation(libs.accompanist.pager)
     implementation(libs.accompanist.pager.indicators)
+
+    implementation(libs.accompanist.navigation)
 
     //Firebase
     implementation(platform(libs.firebase.bom))

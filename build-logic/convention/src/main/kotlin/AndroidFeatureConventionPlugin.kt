@@ -15,7 +15,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
                 add("implementation", project(":core:designsystem"))
-                add("implementation", libs.findLibrary("compose.navigation").get())
                 add("implementation", libs.findLibrary("compose.ui").get())
                 add("implementation", libs.findLibrary("compose.ui.tooling").get())
                 add("implementation", libs.findLibrary("compose.ui.tooling.preview").get())
