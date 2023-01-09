@@ -1,6 +1,6 @@
 package com.example.auth.auth
 
-import com.example.common.components.TextFieldState
+import com.example.designsystem.components.TextFieldState
 
 class PasswordState : TextFieldState(::isPasswordCorrect, ::passwordValidationError)
 

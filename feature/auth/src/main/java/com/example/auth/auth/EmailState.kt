@@ -1,6 +1,6 @@
 package com.example.auth.auth
 
-import com.example.common.components.TextFieldState
+import com.example.designsystem.components.TextFieldState
 import java.util.regex.Pattern
 
 private const val EMAIL_VALIDATION_REGEX = "^(.+)@(.+)\$"

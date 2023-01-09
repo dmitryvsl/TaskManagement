@@ -109,6 +109,7 @@ fun ForgotPasswordRoute(
             emailState = emailState,
             imeAction = ImeAction.Done,
             onImeAction = {
+                focusManager.clearFocus()
                 keyboardController?.hide()
             }
         )

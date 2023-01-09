@@ -39,7 +39,8 @@ fun NavGraphBuilder.authGraph(
     navController: NavController,
     shouldShowOnboarding: Boolean = false,
     modifier: Modifier = Modifier,
-    onOnboardingPassed: () -> Unit
+    onOnboardingPassed: () -> Unit,
+    navigateToDashboard: () -> Unit
 ) {
     navigation(
         route = authNavigationRouteGraph,
@@ -93,13 +94,13 @@ fun NavGraphBuilder.authGraph(
             SignUpRoute(
                 modifier = modifier,
                 navigateToSignIn = { navController.navigateToSignIn() },
-                onSignUp = {}
+                onSignUp = navigateToDashboard
             )
         }
         composable(signInRoute) {
             SignInRoute(
                 onBackClick = { navController.navigateUp() },
-                onSignIn = {},
+                onSignIn = navigateToDashboard,
                 navigateToForgotPassword = { navController.navigateToForgotPassword() }
             )
         }

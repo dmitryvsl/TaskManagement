@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.auth.auth.BaseAuthViewModel
 import com.example.domain.repository.AuthRepository
+import com.example.domain.repository.MutableAuthRepository
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val authRepository: MutableAuthRepository,
 ) : BaseAuthViewModel() {
 
     override val error: MutableLiveData<Throwable> = MutableLiveData()

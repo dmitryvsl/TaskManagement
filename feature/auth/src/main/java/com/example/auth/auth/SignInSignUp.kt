@@ -1,6 +1,5 @@
 package com.example.auth.auth
 
-import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,7 +18,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,11 +27,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.common.components.Overlay
-import com.example.common.components.TextFieldError
-import com.example.common.components.TextFieldState
-import com.example.common.extension.drawColoredShadow
-import com.example.designsystem.theme.Dark
+import com.example.designsystem.components.Overlay
+import com.example.designsystem.components.TextFieldError
+import com.example.designsystem.components.TextFieldState
+import com.example.designsystem.extension.customShadow
 import com.example.designsystem.theme.White
 import com.example.domain.exception.*
 import com.example.feature.auth.R
@@ -49,20 +46,9 @@ internal fun Email(
     imeAction: ImeAction = ImeAction.Next,
     onImeAction: () -> Unit = {}
 ) {
-    val mediumShape = MaterialTheme.shapes.medium
-    val colorModifier = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-            modifier.drawColoredShadow(color = Dark)
-        else
-            modifier.shadow(
-                elevation = 2.dp,
-                shape = mediumShape,
-                spotColor = Dark.copy(alpha = 0.92f),
-                ambientColor = Dark.copy(alpha = 0.92f),
-            )
-    }
     OutlinedTextField(
-        modifier = colorModifier
+        modifier =  modifier
+            .customShadow()
             .fillMaxWidth()
             .onFocusChanged { focusState ->
                 emailState.onFocusChange(focusState.isFocused)
@@ -121,20 +107,9 @@ internal fun Password(
     onImeAction: () -> Unit = {}
 ) {
     var showPassword by remember { mutableStateOf(true) }
-    val mediumShape = MaterialTheme.shapes.medium
-    val colorModifier = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-            modifier.drawColoredShadow(color = Dark)
-        else
-            modifier.shadow(
-                elevation = 2.dp,
-                shape = mediumShape,
-                spotColor = Dark.copy(alpha = 0.92f),
-                ambientColor = Dark.copy(alpha = 0.92f),
-            )
-    }
     OutlinedTextField(
-        modifier = colorModifier
+        modifier = modifier
+            .customShadow()
             .fillMaxWidth()
             .onFocusChanged { focusState ->
                 passwordState.onFocusChange(focusState.isFocused)

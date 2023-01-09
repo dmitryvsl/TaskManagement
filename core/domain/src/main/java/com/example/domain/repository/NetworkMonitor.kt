@@ -1,4 +1,4 @@
-package com.example.data.utils
+package com.example.domain.repository
 
 import androidx.lifecycle.LiveData
 import io.reactivex.Observable

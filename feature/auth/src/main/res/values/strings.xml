@@ -1,22 +1,27 @@
 <resources>
-    <string name="app_name">auth</string>
+    <!-- Controls   -->
     <string name="signUp">Sign Up</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="orSignUpWith">Or sign up with</string>
     <string name="close">Close</string>
-    <string name="userCreateError">Oops, error occurred while creating user</string>
-    <string name="someErrorOccured">Some error occurred. Please, try again</string>
-    <string name="userAlreadyExist">The email address is already in use by another account.</string>
-    <string name="noInternetConnection">No internet connection</string>
     <string name="forgotPassword">Forgot password ?</string>
     <string name="alreadyHaveAnAccount">Already have an account?</string>
     <string name="signIn">Sign In</string>
     <string name="dontHaveAccount">Don\'t have an account?</string>
-    <string name="invalidEmailOrPassword">Invalid Email or Password</string>
     <string name="enterYourEmailToResetPassword">Enter your email then we will send you sms to reset new password.</string>
     <string name="sendEmail">Send Email</string>
+
+<!--    Messages, Notifications-->
+    <string name="userCreateError">Oops, error occurred while creating user</string>
+    <string name="someErrorOccured">Some error occurred. Please, try again</string>
+    <string name="userAlreadyExist">The email address is already in use by another account.</string>
+    <string name="noInternetConnection">No internet connection</string>
+    <string name="invalidEmailOrPassword">Invalid Email or Password</string>
+    <string name="invalidEmail">Invalid Email address</string>
+    <string name="enteredEmailDoesntExist">User with this email does not exist</string>
+    <string name="messageWasSentToYourEmail">Password Reset Email Has Been Sent</string>
 
 <!--    Onboarding -->
     <string name="title1">Welcome!</string>
@@ -27,8 +32,4 @@
     <string name="description3">It has been easier to complete tasks.</string>
     <string name="skip">Skip</string>
     <string name="getStarted">Get Started</string>
-    <string name="invalidEmail">Invalid Email address</string>
-    <string name="enteredEmailDoesntExist">User with this email does not exist</string>
-    <string name="messageWasSentToYourEmail">Message was sent to your email address</string>
-
 </resources>

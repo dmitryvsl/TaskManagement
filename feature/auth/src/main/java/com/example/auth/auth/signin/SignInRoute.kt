@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.auth.auth.*
-import com.example.common.components.AuthOtherWay
+import com.example.designsystem.components.AuthOtherWay
 import com.example.feature.auth.R
 
 

@@ -4,11 +4,10 @@ plugins {
 }
 
 android {
-    namespace = "com.example.feature.auth"
+    namespace = "com.example.feature.dashboard"
 }
 
 dependencies {
-
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
@@ -18,10 +17,7 @@ dependencies {
     implementation(libs.compose.hilt.navigation)
     implementation(libs.compose.material.icons.extended)
 
-    //Accompanist
-    implementation(libs.accompanist.pager)
-    implementation(libs.accompanist.pager.indicators)
-
+    // Accompanist
     implementation(libs.accompanist.navigation)
 
     //Firebase

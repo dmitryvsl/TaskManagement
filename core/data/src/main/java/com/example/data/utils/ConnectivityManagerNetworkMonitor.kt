@@ -7,8 +7,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
 import androidx.core.content.getSystemService
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import com.example.domain.repository.NetworkMonitor
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Observable
 import javax.inject.Inject
