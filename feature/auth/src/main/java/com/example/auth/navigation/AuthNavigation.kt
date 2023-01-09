@@ -46,46 +46,39 @@ fun NavGraphBuilder.authGraph(
         route = authNavigationRouteGraph,
         startDestination = if (shouldShowOnboarding) onboardingRoute else signUpRoute,
         enterTransition = {
-            if (targetState.destination.hierarchy.any { it.route == authNavigationRouteGraph })
-                slideInHorizontally { 1000 }
-            else
-                null
+            slideInHorizontally { 1000 }
 
         },
         exitTransition = {
-            if (targetState.destination.hierarchy.any { it.route == authNavigationRouteGraph })
-                slideOutHorizontally { -1000 }
-            else
-                null
+            slideOutHorizontally { -1000 }
 
         },
         popEnterTransition = {
-            if (targetState.destination.hierarchy.any { it.route == authNavigationRouteGraph })
-                slideInHorizontally { -1000 }
-            else
-                null
+            slideInHorizontally { -1000 }
+
 
         },
         popExitTransition = {
-            if (targetState.destination.hierarchy.any { it.route == authNavigationRouteGraph })
-                slideOutHorizontally { 1000 }
-            else
-                null
-
+            slideOutHorizontally { 1000 }
         }
     ) {
-        composable(
-            route = onboardingRoute,
-            exitTransition = { slideOutHorizontally { -1000 } }
-        ) {
+        composable(onboardingRoute) {
             OnboardingRoute(
                 navigateToSignUp = {
-                    onNavigateFromOnboardingScreen(onOnboardingPassed, navController)
-                    navController.navigateToSignUp()
+                    onOnboardingPassed()
+                    navController.navigateToSignUp(
+                        NavOptions.Builder()
+                            .setPopUpTo(route = onboardingRoute, inclusive = true)
+                            .build()
+                    )
                 },
                 navigateToSignIn = {
-                    onNavigateFromOnboardingScreen(onOnboardingPassed, navController)
-                    navController.navigateToSignIn()
+                    onOnboardingPassed()
+                    navController.navigateToSignIn(
+                        NavOptions.Builder()
+                            .setPopUpTo(route = onboardingRoute, inclusive = true)
+                            .build()
+                    )
                 }
             )
         }
@@ -111,12 +104,4 @@ fun NavGraphBuilder.authGraph(
             )
         }
     }
-}
-
-private fun onNavigateFromOnboardingScreen(
-    onOnboardingPassed: () -> Unit,
-    navController: NavController
-) {
-    onOnboardingPassed()
-    navController.backQueue.removeLast()
 }

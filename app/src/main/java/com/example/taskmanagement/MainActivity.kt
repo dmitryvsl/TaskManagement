@@ -46,13 +46,15 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         disposable =
             networkMonitor.isOnline.subscribe { isOnline -> this.isOnline.value = isOnline }
-        val isUserSignedIn = userSignInCheckRepository.isSignedIn()
         setContent {
             TaskManagementTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    var isUserSignedIn by remember {
+                        mutableStateOf(userSignInCheckRepository.isSignedIn())
+                    }
                     val appState = rememberAppState()
                     val notConnected = stringResource(R.string.notConnected)
                     appState.uiController.setSystemBarsColor(
@@ -76,10 +78,10 @@ class MainActivity : ComponentActivity() {
                             shouldShowOnboarding = sharedPreferencesUtils.isFirstLaunch(),
                             shouldShowAuth = !isUserSignedIn,
                             onOnboardingPassed = { sharedPreferencesUtils.markOnboardingPassed() },
-                            onBackClick = { appState.onBackClick() }
+                            onBackClick = { appState.onBackClick() },
+                            onAuthPassed = { isUserSignedIn = true }
                         )
                     }
-
                 }
             }
         }
@@ -100,8 +102,7 @@ class MainActivity : ComponentActivity() {
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    ,
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {

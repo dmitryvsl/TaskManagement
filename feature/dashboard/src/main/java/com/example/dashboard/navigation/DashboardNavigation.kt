@@ -18,7 +18,7 @@ fun NavController.navigateToDashboard(navOptions: NavOptions? = null) {
 }
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.dashboard(
+fun NavGraphBuilder.dashboardGraph(
     navController: NavController,
     onBackClick: () -> Unit,
 ) {
