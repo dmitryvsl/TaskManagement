@@ -17,8 +17,8 @@ import com.google.accompanist.navigation.animation.navigation
 
 
 const val authNavigationRouteGraph = "auth_graph"
-private const val signUpRoute = "auth_route"
-private const val signInRoute = "signin_route"
+const val signUpRoute = "auth_route"
+const val signInRoute = "signin_route"
 private const val onboardingRoute = "onboarding_route"
 private const val forgotPasswordRoute = "forgot_password_route"
 

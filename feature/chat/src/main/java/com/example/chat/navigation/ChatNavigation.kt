@@ -1,6 +1,8 @@
 package com.example.chat.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -17,8 +19,19 @@ fun NavController.navigateToChat(navOptions: NavOptions? = null) {
 }
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.chatGraph() {
-    navigation(startDestination = chatListRoute, route = chatGraph) {
+fun NavGraphBuilder.chatGraph(
+    dashboardRoute: String,
+) {
+    navigation(
+        startDestination = chatListRoute,
+        route = chatGraph,
+        enterTransition = {
+            slideInHorizontally { if (initialState.destination.route == dashboardRoute) 1000 else -1000 }
+        },
+        exitTransition = {
+            slideOutHorizontally { if (targetState.destination.route == dashboardRoute) 1000 else -1000 }
+        }
+    ) {
         composable(chatListRoute) {
             ChatRoute()
         }

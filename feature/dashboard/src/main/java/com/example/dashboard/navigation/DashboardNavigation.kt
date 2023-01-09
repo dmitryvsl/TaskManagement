@@ -1,8 +1,10 @@
 package com.example.dashboard.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.navigation
@@ -21,6 +23,8 @@ fun NavController.navigateToDashboard(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.dashboardGraph(
     navController: NavController,
     onBackClick: () -> Unit,
+    signInRoute: String,
+    signUpRoute: String,
 ) {
     navigation(
         route = dashboardGraph,
@@ -29,7 +33,10 @@ fun NavGraphBuilder.dashboardGraph(
         composable(
             dashboardHomeRoute,
             enterTransition = {
-                slideInVertically { 1000 }
+                if (targetState.destination.hierarchy.any { it.route == signInRoute || it.route == signUpRoute })
+                    slideInVertically { 1000 }
+                else
+                    slideInHorizontally { -1000 }
             }
         ) {
             DashboardRoute()

@@ -56,11 +56,10 @@ class AppState(
     val shouldShowBottomBar: Boolean
         @Composable get() = currentDestination?.route in topLevelDestinationRoutes
 
-
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.values().asList()
 
     // Routes to Top Level Destination composables
-    val topLevelDestinationRoutes: List<String> =
+    private val topLevelDestinationRoutes: List<String> =
         listOf(dashboardHomeRoute, chatListRoute, notificationRoute, settingsRoute)
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
