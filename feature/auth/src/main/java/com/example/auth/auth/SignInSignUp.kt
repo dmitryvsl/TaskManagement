@@ -10,9 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Mail
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -47,7 +44,7 @@ internal fun Email(
     onImeAction: () -> Unit = {}
 ) {
     OutlinedTextField(
-        modifier =  modifier
+        modifier = modifier
             .customShadow()
             .fillMaxWidth()
             .onFocusChanged { focusState ->
@@ -77,7 +74,7 @@ internal fun Email(
         isError = emailState.showErrors(),
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.Mail,
+                painter = painterResource(id = R.drawable.ic_mail),
                 contentDescription = null,
                 tint = MaterialTheme.colors.onBackground
             )
@@ -151,7 +148,7 @@ internal fun Password(
                     .clickable {
                         showPassword = !showPassword
                     },
-                imageVector = if (showPassword) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                painter = painterResource(id = if (showPassword) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
                 contentDescription = null,
                 tint = MaterialTheme.colors.onBackground
             )

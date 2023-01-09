@@ -1,6 +1,7 @@
 package com.example.taskmanagement
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
@@ -101,8 +102,7 @@ class MainActivity : ComponentActivity() {
             color = if (isSystemInDarkTheme()) MaterialTheme.colors.primary else MaterialTheme.colors.background
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -135,12 +135,11 @@ class MainActivity : ComponentActivity() {
                         alwaysShowLabel = false,
                         selectedContentColor = if (isDarkTheme) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary,
                         unselectedContentColor = Gray,
-                        onClick = {
-                            appState.navigateToTopLevelDestination(item)
-                        }
+                        onClick = { appState.navigateToTopLevelDestination(item) }
                     )
                 }
             }
+
         }
     }
 

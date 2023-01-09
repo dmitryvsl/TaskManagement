@@ -43,6 +43,9 @@ dependencies {
     //features
     implementation(project(":feature:auth"))
     implementation(project(":feature:dashboard"))
+    implementation(project(":feature:chat"))
+    implementation(project(":feature:notification"))
+    implementation(project(":feature:settings"))
 
     //Compose
     implementation(libs.compose.activity)

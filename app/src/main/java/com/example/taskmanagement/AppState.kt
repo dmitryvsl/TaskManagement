@@ -9,8 +9,14 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
+import com.example.chat.navigation.chatListRoute
+import com.example.chat.navigation.navigateToChat
 import com.example.dashboard.navigation.dashboardHomeRoute
 import com.example.dashboard.navigation.navigateToDashboard
+import com.example.notification.navigation.navigateToNotification
+import com.example.notification.navigation.notificationRoute
+import com.example.settings.navigation.navigateToSettings
+import com.example.settings.navigation.settingsRoute
 import com.example.taskmanagement.navigation.TopLevelDestination
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.SystemUiController
@@ -34,12 +40,15 @@ class AppState(
     val snackbarHostState: SnackbarHostState,
     val uiController: SystemUiController
 ) {
-    val currentDestination: NavDestination?
+    private val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() = when (currentDestination?.route) {
             dashboardHomeRoute -> TopLevelDestination.DASHBOARD
+            chatListRoute -> TopLevelDestination.CHAT
+            notificationRoute -> TopLevelDestination.NOTIFICATION
+            settingsRoute -> TopLevelDestination.SETTINGS
             else -> null
         }
 
@@ -51,7 +60,8 @@ class AppState(
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.values().asList()
 
     // Routes to Top Level Destination composables
-    val topLevelDestinationRoutes: List<String> = listOf(dashboardHomeRoute)
+    val topLevelDestinationRoutes: List<String> =
+        listOf(dashboardHomeRoute, chatListRoute, notificationRoute, settingsRoute)
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
 
@@ -71,6 +81,10 @@ class AppState(
 
         when (topLevelDestination) {
             TopLevelDestination.DASHBOARD -> navController.navigateToDashboard(topLevelNavOptions)
+            TopLevelDestination.CHAT -> navController.navigateToChat(topLevelNavOptions)
+            TopLevelDestination.NOTIFICATION ->
+                navController.navigateToNotification(topLevelNavOptions)
+            TopLevelDestination.SETTINGS -> navController.navigateToSettings(topLevelNavOptions)
         }
 
     }

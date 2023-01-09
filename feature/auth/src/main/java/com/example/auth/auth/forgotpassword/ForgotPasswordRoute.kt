@@ -7,7 +7,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBackIos
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -68,7 +67,7 @@ fun ForgotPasswordRoute(
             onClick = onBackClick,
         ) {
             Icon(
-                imageVector = Icons.Rounded.ArrowBackIos,
+                painter = painterResource(id = R.drawable.ic_back),
                 contentDescription = "Back",
                 tint = MaterialTheme.colors.onBackground
             )
