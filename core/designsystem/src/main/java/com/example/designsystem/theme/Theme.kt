@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 
 private val DarkColorPalette = darkColors(
     primary = Blue,
@@ -27,6 +28,8 @@ private val LightColorPalette = lightColors(
 
 )
 
+private var Dimensions = sw600Dimension
+
 @Composable
 fun TaskManagementTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -38,10 +41,19 @@ fun TaskManagementTheme(
         LightColorPalette
     }
 
+    val configuration = LocalConfiguration.current
+    Dimensions = when {
+        configuration.smallestScreenWidthDp <= 360 -> sw360Dimensions
+        else -> sw600Dimension
+    }
+
     MaterialTheme(
         colors = colors,
         typography = Typography,
         shapes = Shapes,
-        content = content
+        content = content,
     )
 }
+
+val MaterialTheme.dimens
+    get() = Dimensions

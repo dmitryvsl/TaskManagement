@@ -1,7 +1,9 @@
 package com.example.taskmanagement.navigation
 
 import android.util.Log
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
@@ -12,10 +14,12 @@ import com.example.auth.navigation.authNavigationRouteGraph
 import com.example.auth.navigation.signInRoute
 import com.example.auth.navigation.signUpRoute
 import com.example.chat.navigation.chatGraph
+import com.example.chat.navigation.chatListRoute
 import com.example.dashboard.navigation.dashboardGraph
 import com.example.dashboard.navigation.dashboardHomeRoute
 import com.example.dashboard.navigation.navigateToDashboard
 import com.example.notification.navigation.notification
+import com.example.notification.navigation.notificationRoute
 import com.example.settings.navigation.settingsGraph
 import com.example.settings.navigation.settingsRoute
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -27,38 +31,23 @@ fun TmNavHost(
     onBackClick: () -> Unit,
     onOnboardingPassed: () -> Unit,
     onAuthPassed: () -> Unit,
-    shouldShowOnboarding: Boolean,
-    shouldShowAuth: Boolean,
+    startDestination: String,
+    authGraphStartDestination: String,
     modifier: Modifier = Modifier,
 ) {
-    Log.d("TAG", "TmNavHost: $shouldShowAuth")
     AnimatedNavHost(
         navController = navController,
-        startDestination = if (shouldShowAuth) authNavigationRouteGraph else dashboardGraph,
+        startDestination = startDestination,
         modifier = modifier,
-        enterTransition = {
-            slideInHorizontally { 1000 }
-
-        },
-        exitTransition = {
-            slideOutHorizontally { -1000 }
-
-        },
-        popEnterTransition = {
-            slideInHorizontally { -1000 }
-        },
-        popExitTransition = {
-            slideOutHorizontally { 1000 }
-        }
     ) {
         authGraph(
             navController = navController,
-            shouldShowOnboarding = shouldShowOnboarding,
+            dashboardRoute = dashboardHomeRoute,
             modifier = modifier,
+            startDestination = authGraphStartDestination,
             onOnboardingPassed = onOnboardingPassed,
             navigateToDashboard = {
                 onAuthPassed()
-                navController.backQueue.clear()
                 navController.navigateToDashboard()
             }
         )
@@ -66,7 +55,7 @@ fun TmNavHost(
             navController = navController,
             onBackClick = onBackClick,
             signInRoute = signInRoute,
-            signUpRoute = signUpRoute
+            signUpRoute = signUpRoute,
         )
         chatGraph(dashboardRoute = dashboardHomeRoute)
         notification(settingsRoute = settingsRoute)

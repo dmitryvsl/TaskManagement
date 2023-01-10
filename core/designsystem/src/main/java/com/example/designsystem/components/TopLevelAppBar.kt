@@ -11,17 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.White
+import com.example.designsystem.theme.dimens
 
 @Composable
 fun TopLevelAppBar(
     title: String,
     titleIcon: Painter,
     onActionButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -30,7 +30,7 @@ fun TopLevelAppBar(
             style = MaterialTheme.typography.h1,
             color = MaterialTheme.colors.onBackground,
         )
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(MaterialTheme.dimens.paddingSmall))
         Icon(
             painter = titleIcon,
             contentDescription = null,
@@ -38,7 +38,7 @@ fun TopLevelAppBar(
         )
         Spacer(modifier = Modifier.weight(1f))
         Button(
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier.size(MaterialTheme.dimens.minimumTouchTarget),
             onClick = onActionButtonClick,
             shape = MaterialTheme.shapes.small,
             colors = ButtonDefaults.buttonColors(

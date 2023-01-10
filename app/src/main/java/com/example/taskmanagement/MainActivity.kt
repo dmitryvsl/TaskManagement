@@ -1,9 +1,12 @@
 package com.example.taskmanagement
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -12,14 +15,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.example.auth.navigation.authNavigationRouteGraph
+import com.example.auth.navigation.onboardingRoute
+import com.example.auth.navigation.signUpRoute
+import com.example.dashboard.navigation.dashboardGraph
 import com.example.designsystem.extension.customShadow
-import com.example.domain.repository.NetworkMonitor
 import com.example.designsystem.theme.Gray
 import com.example.designsystem.theme.TaskManagementTheme
+import com.example.designsystem.theme.dimens
+import com.example.designsystem.utils.animationDuration
+import com.example.domain.repository.NetworkMonitor
 import com.example.domain.repository.UserSignInCheckRepository
 import com.example.taskmanagement.navigation.TmNavHost
 import com.example.taskmanagement.utils.SharedPreferencesUtils
@@ -47,6 +57,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         disposable =
             networkMonitor.isOnline.subscribe { isOnline -> this.isOnline.value = isOnline }
+
         setContent {
             TaskManagementTheme {
                 Surface(
@@ -69,15 +80,18 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         snackbarHost = { SnackbarHost(appState.snackbarHostState) },
                         bottomBar = {
-                            if (appState.shouldShowBottomBar)
-                                TmBottomBar(appState = appState)
+                            if (appState.shouldShowBottomBar) TmBottomBar(appState = appState)
                         }
                     ) { paddingValues ->
+                        val startDestination =
+                            remember { if (!isUserSignedIn) authNavigationRouteGraph else dashboardGraph }
+                        val authGraphStartDestination =
+                            remember { if (sharedPreferencesUtils.isFirstLaunch()) onboardingRoute else signUpRoute }
                         TmNavHost(
                             modifier = Modifier.padding(paddingValues),
                             navController = appState.navController,
-                            shouldShowOnboarding = sharedPreferencesUtils.isFirstLaunch(),
-                            shouldShowAuth = !isUserSignedIn,
+                            startDestination = startDestination,
+                            authGraphStartDestination = authGraphStartDestination,
                             onOnboardingPassed = { sharedPreferencesUtils.markOnboardingPassed() },
                             onBackClick = { appState.onBackClick() },
                             onAuthPassed = { isUserSignedIn = true }
@@ -89,20 +103,30 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun TmBottomBar(
-        appState: AppState
-    ) {
+    fun TmBottomBar(appState: AppState) {
+        val navigationBarInsets =
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        val bottomBarOffset by animateDpAsState(
+            targetValue = if (appState.shouldShowBottomBar) (0.dp - navigationBarInsets) else MaterialTheme.dimens.bottomNavBarSize + navigationBarInsets,
+            animationSpec = tween(animationDuration)
+        )
         Surface(
             modifier = Modifier
+                .offset(y = bottomBarOffset)
                 .fillMaxWidth()
-                .height(56.dp)
-                .padding(vertical = 4.dp, horizontal = 12.dp)
+                .padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
+                .height(MaterialTheme.dimens.bottomNavBarSize)
                 .customShadow(),
             shape = MaterialTheme.shapes.medium,
             color = if (isSystemInDarkTheme()) MaterialTheme.colors.primary else MaterialTheme.colors.background
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = MaterialTheme.dimens.paddingSmall,
+                        horizontal = MaterialTheme.dimens.paddingMedium
+                    ),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -121,8 +145,8 @@ class MainActivity : ComponentActivity() {
                                 if (isSelected) {
                                     val primaryColor = MaterialTheme.colors.primary
                                     val secondaryColor = MaterialTheme.colors.secondary
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Canvas(Modifier.size(6.dp)) {
+                                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingSmall))
+                                    Canvas(Modifier.size(MaterialTheme.dimens.paddingSmall)) {
                                         drawCircle(
                                             color = if (isDarkTheme) secondaryColor else primaryColor
                                         )

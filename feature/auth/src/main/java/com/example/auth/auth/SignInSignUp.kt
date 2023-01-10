@@ -15,7 +15,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -25,10 +24,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.components.Overlay
-import com.example.designsystem.components.TextFieldError
-import com.example.designsystem.components.TextFieldState
-import com.example.designsystem.extension.customShadow
-import com.example.designsystem.theme.White
+import com.example.designsystem.components.textfield.TextFieldError
+import com.example.designsystem.components.textfield.TmOutlinedTextField
+import com.example.designsystem.components.textfield.TextFieldState
+import com.example.designsystem.theme.dimens
 import com.example.domain.exception.*
 import com.example.feature.auth.R
 
@@ -43,28 +42,14 @@ internal fun Email(
     imeAction: ImeAction = ImeAction.Next,
     onImeAction: () -> Unit = {}
 ) {
-    OutlinedTextField(
-        modifier = modifier
-            .customShadow()
-            .fillMaxWidth()
-            .onFocusChanged { focusState ->
-                emailState.onFocusChange(focusState.isFocused)
-                if (!focusState.isFocused) {
-                    emailState.enableShowErrors()
-                }
-            },
+    TmOutlinedTextField(
+        modifier = modifier,
         value = emailState.text,
         onValueChange = { emailState.text = it },
-        textStyle = MaterialTheme.typography.body2,
-        singleLine = true,
-        maxLines = 1,
-        shape = MaterialTheme.shapes.medium,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = MaterialTheme.colors.background,
-            textColor = MaterialTheme.colors.onBackground,
-            unfocusedBorderColor = White,
-            cursorColor = MaterialTheme.colors.onBackground
-        ),
+        onFocusChanged = { focusState ->
+            emailState.onFocusChange(focusState.isFocused)
+            if (!focusState.isFocused) emailState.enableShowErrors()
+        },
         placeholder = {
             Text(
                 text = stringResource(id = R.string.email),
@@ -86,7 +71,7 @@ internal fun Email(
         keyboardActions = KeyboardActions(onDone = { onImeAction() }),
     )
     Box(
-        modifier = modifier.height(20.dp)
+        modifier = modifier.height(MaterialTheme.dimens.paddingExtraLarge)
     ) {
         emailState.getError()?.let { error -> TextFieldError(textError = error) }
     }
@@ -104,28 +89,16 @@ internal fun Password(
     onImeAction: () -> Unit = {}
 ) {
     var showPassword by remember { mutableStateOf(true) }
-    OutlinedTextField(
-        modifier = modifier
-            .customShadow()
-            .fillMaxWidth()
-            .onFocusChanged { focusState ->
-                passwordState.onFocusChange(focusState.isFocused)
-                if (!focusState.isFocused) {
-                    passwordState.enableShowErrors()
-                }
-            },
+    TmOutlinedTextField(
+        modifier = modifier,
         value = passwordState.text,
         onValueChange = { passwordState.text = it },
-        textStyle = MaterialTheme.typography.body2,
-        singleLine = true,
-        maxLines = 1,
-        shape = MaterialTheme.shapes.medium,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = MaterialTheme.colors.background,
-            textColor = MaterialTheme.colors.onBackground,
-            unfocusedBorderColor = White,
-            cursorColor = MaterialTheme.colors.onBackground
-        ),
+        onFocusChanged = { focusState ->
+            passwordState.onFocusChange(focusState.isFocused)
+            if (!focusState.isFocused) {
+                passwordState.enableShowErrors()
+            }
+        },
         placeholder = {
             Text(
                 text = stringResource(id = hint),
@@ -144,6 +117,7 @@ internal fun Password(
         trailingIcon = {
             Icon(
                 modifier = Modifier
+                    .size(MaterialTheme.dimens.minimumTouchTarget / 2f)
                     .clip(CircleShape)
                     .clickable {
                         showPassword = !showPassword
@@ -159,7 +133,7 @@ internal fun Password(
         keyboardActions = KeyboardActions(onDone = { onImeAction() })
     )
     Box(
-        modifier = modifier.height(20.dp)
+        modifier = modifier.height(MaterialTheme.dimens.paddingExtraLarge)
     ) {
         passwordState.getError()?.let { error -> TextFieldError(textError = error) }
     }
@@ -182,7 +156,7 @@ internal fun AuthHeader(
             text = stringResource(id = label),
             style = MaterialTheme.typography.h1
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.dimens.paddingSmall))
         Image(
             painter = painterResource(id = R.drawable.ic_signup),
             contentDescription = null
@@ -214,10 +188,10 @@ internal fun LoadingOverlay(
                 )
                 Icon(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(MaterialTheme.dimens.minimumTouchTarget)
                         .clip(CircleShape)
                         .clickable { onCancelClick() }
-                        .padding(12.dp),
+                        .padding(MaterialTheme.dimens.paddingMedium),
                     imageVector = Icons.Outlined.Close,
                     contentDescription = null,
                     tint = MaterialTheme.colors.secondary
@@ -242,7 +216,7 @@ internal fun InformationOverlay(
             color = MaterialTheme.colors.background
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(MaterialTheme.dimens.paddingDefault),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -252,7 +226,7 @@ internal fun InformationOverlay(
                     color = MaterialTheme.colors.onBackground,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
                 Button(onClick = { onCloseClick() }) {
                     Text(
                         text = stringResource(id = R.string.close),

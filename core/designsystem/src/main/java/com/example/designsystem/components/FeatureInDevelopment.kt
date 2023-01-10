@@ -14,13 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.core.designsystem.R
 import com.example.designsystem.theme.TaskManagementTheme
+import com.example.designsystem.theme.dimens
 
 @Composable
 fun FeatureInDevelopment() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = MaterialTheme.dimens.paddingDefault),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -30,7 +31,7 @@ fun FeatureInDevelopment() {
             contentDescription = null
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(MaterialTheme.dimens.paddingDefault))
         Text(
             text = stringResource(R.string.inDevelopment),
             style = MaterialTheme.typography.h4,

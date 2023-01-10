@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.Gray
+import com.example.designsystem.theme.dimens
 
 
 @Composable
@@ -31,7 +32,7 @@ fun AuthOtherWay(
             style = MaterialTheme.typography.h4,
             color = Gray
         )
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.dimens.paddingExtraSmall))
         Text(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)

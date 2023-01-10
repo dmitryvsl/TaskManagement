@@ -1,12 +1,15 @@
 package com.example.chat.navigation
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import com.example.chat.ChatRoute
+import com.example.designsystem.utils.animationDuration
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 
@@ -26,10 +29,22 @@ fun NavGraphBuilder.chatGraph(
         startDestination = chatListRoute,
         route = chatGraph,
         enterTransition = {
-            slideInHorizontally { if (initialState.destination.route == dashboardRoute) 1000 else -1000 }
+            slideIntoContainer(
+                if (initialState.destination.route == dashboardRoute)
+                    AnimatedContentScope.SlideDirection.Left
+                else
+                    AnimatedContentScope.SlideDirection.Right,
+                tween(animationDuration)
+            )
         },
         exitTransition = {
-            slideOutHorizontally { if (targetState.destination.route == dashboardRoute) 1000 else -1000 }
+            slideOutOfContainer(
+                if (targetState.destination.route == dashboardRoute)
+                    AnimatedContentScope.SlideDirection.Right
+                else
+                    AnimatedContentScope.SlideDirection.Left,
+                tween(animationDuration)
+            )
         }
     ) {
         composable(chatListRoute) {

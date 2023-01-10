@@ -1,4 +1,4 @@
-package com.example.designsystem.components
+package com.example.designsystem.components.textfield
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,18 +10,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.designsystem.theme.dimens
 
 
 @Composable
 fun TextFieldError(textError: String) {
     Row(modifier = Modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.dimens.paddingDefault))
         Text(
             text = textError,
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colors.error,
-            style = MaterialTheme.typography.body2,
-            fontSize = 12.sp
+            style = MaterialTheme.typography.caption,
         )
     }
 }

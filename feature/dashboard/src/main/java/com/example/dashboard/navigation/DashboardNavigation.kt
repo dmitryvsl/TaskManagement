@@ -1,15 +1,20 @@
 package com.example.dashboard.navigation
 
+import android.util.Log
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
-import androidx.navigation.navigation
 import com.example.dashboard.DashboardRoute
+import com.example.designsystem.utils.animationDuration
 import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.navigation
+import kotlin.math.log
 
 const val dashboardGraph = "dashboard_graph"
 
@@ -22,21 +27,29 @@ fun NavController.navigateToDashboard(navOptions: NavOptions? = null) {
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.dashboardGraph(
     navController: NavController,
-    onBackClick: () -> Unit,
     signInRoute: String,
     signUpRoute: String,
+    onBackClick: () -> Unit,
 ) {
     navigation(
         route = dashboardGraph,
-        startDestination = dashboardHomeRoute
+        startDestination = dashboardHomeRoute,
     ) {
         composable(
             dashboardHomeRoute,
             enterTransition = {
-                if (targetState.destination.hierarchy.any { it.route == signInRoute || it.route == signUpRoute })
-                    slideInVertically { 1000 }
-                else
-                    slideInHorizontally { -1000 }
+                slideIntoContainer(
+                    if (initialState.destination.route == dashboardHomeRoute)
+                        AnimatedContentScope.SlideDirection.Up
+                    else
+                        AnimatedContentScope.SlideDirection.Right,
+                    tween(animationDuration)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentScope.SlideDirection.Left, tween(animationDuration)
+                )
             }
         ) {
             DashboardRoute()
