@@ -95,7 +95,7 @@ fun TmOutlinedTextField(
                 leadingIcon = leadingIcon,
                 trailingIcon = trailingIcon,
                 interactionSource = interactionSource,
-                contentPadding = PaddingValues(0.dp), // this is how you can remove the padding
+                contentPadding = PaddingValues(0.dp),
             )
         }
     }

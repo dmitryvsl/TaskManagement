@@ -9,6 +9,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import com.example.auth.navigation.authGraph
 import com.example.auth.navigation.authNavigationRouteGraph
 import com.example.auth.navigation.signInRoute
@@ -48,7 +49,9 @@ fun TmNavHost(
             onOnboardingPassed = onOnboardingPassed,
             navigateToDashboard = {
                 onAuthPassed()
-                navController.navigateToDashboard()
+                navController.navigateToDashboard(
+                    NavOptions.Builder().setPopUpTo(signUpRoute, true).build()
+                )
             }
         )
         dashboardGraph(

@@ -39,7 +39,7 @@ fun NavGraphBuilder.dashboardGraph(
             dashboardHomeRoute,
             enterTransition = {
                 slideIntoContainer(
-                    if (initialState.destination.route == dashboardHomeRoute)
+                    if (initialState.destination.route == signInRoute || initialState.destination.route == signUpRoute)
                         AnimatedContentScope.SlideDirection.Up
                     else
                         AnimatedContentScope.SlideDirection.Right,

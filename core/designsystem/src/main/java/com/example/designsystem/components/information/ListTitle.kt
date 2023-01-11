@@ -1,4 +1,4 @@
-package com.example.designsystem.components
+package com.example.designsystem.components.information
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*

@@ -110,12 +110,16 @@ class MainActivity : ComponentActivity() {
             targetValue = if (appState.shouldShowBottomBar) (0.dp - navigationBarInsets) else MaterialTheme.dimens.bottomNavBarSize + navigationBarInsets,
             animationSpec = tween(animationDuration)
         )
+        val bottomBarHeight by animateDpAsState(
+            if (appState.shouldShowBottomBar) MaterialTheme.dimens.bottomNavBarSize else 0.dp,
+            tween(animationDuration)
+        )
         Surface(
             modifier = Modifier
                 .offset(y = bottomBarOffset)
                 .fillMaxWidth()
+                .height(bottomBarHeight)
                 .padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
-                .height(MaterialTheme.dimens.bottomNavBarSize)
                 .customShadow(),
             shape = MaterialTheme.shapes.medium,
             color = if (isSystemInDarkTheme()) MaterialTheme.colors.primary else MaterialTheme.colors.background
