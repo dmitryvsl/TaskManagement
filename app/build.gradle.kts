@@ -37,10 +37,15 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
+    implementation(project(":core:domain"))
     implementation(project(":core:data"))
 
     //features
     implementation(project(":feature:auth"))
+    implementation(project(":feature:dashboard"))
+    implementation(project(":feature:chat"))
+    implementation(project(":feature:notification"))
+    implementation(project(":feature:settings"))
 
     //Compose
     implementation(libs.compose.activity)

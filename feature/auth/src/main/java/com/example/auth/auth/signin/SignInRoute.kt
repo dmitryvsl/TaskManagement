@@ -7,7 +7,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBackIos
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -17,12 +16,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.auth.auth.*
-import com.example.common.components.AuthOtherWay
+import com.example.designsystem.components.AuthOtherWay
+import com.example.designsystem.theme.dimens
 import com.example.feature.auth.R
 
 
@@ -40,7 +41,7 @@ fun SignInRoute(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    val modifier: Modifier = Modifier.padding(horizontal = 24.dp)
+    val modifier: Modifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingDefault)
 
     CallStateRepresenter(viewModel = viewModel, onCallSuccess = onSignIn)
 
@@ -57,13 +58,13 @@ fun SignInRoute(
         Spacer(modifier = Modifier.statusBarsPadding())
         IconButton(
             modifier = Modifier
-                .size(48.dp)
-                .padding(12.dp)
+                .size(MaterialTheme.dimens.minimumTouchTarget)
+                .padding(MaterialTheme.dimens.paddingSmall)
                 .align(Alignment.Start),
             onClick = onBackClick,
         ) {
             Icon(
-                imageVector = Icons.Rounded.ArrowBackIos,
+                painter = painterResource(R.drawable.ic_back),
                 contentDescription = "Back",
                 tint = MaterialTheme.colors.onBackground
             )
@@ -73,7 +74,7 @@ fun SignInRoute(
 
         AuthHeader(label = R.string.signIn)
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(MaterialTheme.dimens.paddingExtraLarge))
 
         Email(modifier = modifier, emailState = email)
 
@@ -93,7 +94,7 @@ fun SignInRoute(
         ) {
             Text(
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = MaterialTheme.dimens.paddingDefault)
                     .clip(MaterialTheme.shapes.small)
                     .clickable { navigateToForgotPassword() },
                 text = stringResource(R.string.forgotPassword),
@@ -117,7 +118,7 @@ fun SignInRoute(
             )
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(MaterialTheme.dimens.paddingDefault))
 
         AuthOtherWay(
             modifier = modifier,

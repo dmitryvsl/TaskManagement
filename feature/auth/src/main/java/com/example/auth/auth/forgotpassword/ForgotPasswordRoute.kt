@@ -7,7 +7,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBackIos
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -25,6 +24,7 @@ import com.example.auth.auth.CallStateRepresenter
 import com.example.auth.auth.Email
 import com.example.auth.auth.EmailState
 import com.example.auth.auth.InformationOverlay
+import com.example.designsystem.theme.dimens
 import com.example.feature.auth.R
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -35,7 +35,7 @@ fun ForgotPasswordRoute(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    val modifier = Modifier.padding(horizontal = 24.dp)
+    val modifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
     val emailState = remember { EmailState() }
     var showInformationOverlay by remember { mutableStateOf(false) }
 
@@ -62,13 +62,13 @@ fun ForgotPasswordRoute(
         Spacer(modifier = Modifier.statusBarsPadding())
         IconButton(
             modifier = Modifier
-                .size(48.dp)
-                .padding(12.dp)
+                .size(MaterialTheme.dimens.minimumTouchTarget)
+                .padding(MaterialTheme.dimens.paddingMedium)
                 .align(Alignment.Start),
             onClick = onBackClick,
         ) {
             Icon(
-                imageVector = Icons.Rounded.ArrowBackIos,
+                painter = painterResource(id = R.drawable.ic_back),
                 contentDescription = "Back",
                 tint = MaterialTheme.colors.onBackground
             )
@@ -82,7 +82,7 @@ fun ForgotPasswordRoute(
             contentDescription = null
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
 
         Text(
             modifier = modifier,
@@ -92,7 +92,7 @@ fun ForgotPasswordRoute(
             textAlign = TextAlign.Center
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(MaterialTheme.dimens.paddingSmall))
 
         Text(
             modifier = modifier,
@@ -102,13 +102,14 @@ fun ForgotPasswordRoute(
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
 
         Email(
             modifier = modifier,
             emailState = emailState,
             imeAction = ImeAction.Done,
             onImeAction = {
+                focusManager.clearFocus()
                 keyboardController?.hide()
             }
         )

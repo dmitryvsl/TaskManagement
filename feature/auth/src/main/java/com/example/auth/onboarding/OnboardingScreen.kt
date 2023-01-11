@@ -15,10 +15,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.common.components.AuthOtherWay
+import com.example.designsystem.components.AuthOtherWay
 import com.example.designsystem.theme.Gray
 import com.example.auth.onboarding.model.Page
 import com.example.auth.onboarding.model.onboardPages
+import com.example.designsystem.theme.dimens
 import com.example.feature.auth.R
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
@@ -86,7 +87,7 @@ private fun SkipAndPagerIndicator(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = MaterialTheme.dimens.paddingSmall),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -95,8 +96,8 @@ private fun SkipAndPagerIndicator(
         ) {
             Button(
                 modifier = Modifier
-                    .size(72.dp)
-                    .padding(8.dp),
+                    .size(MaterialTheme.dimens.minimumTouchTarget * 1.5f)
+                    .padding(MaterialTheme.dimens.paddingSmall),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = MaterialTheme.colors.primary
                 ),
@@ -124,7 +125,7 @@ private fun SkipAndPagerIndicator(
         HorizontalPagerIndicator(
             pagerState = pagerState,
             activeColor = MaterialTheme.colors.primary,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(MaterialTheme.dimens.paddingDefault),
         )
     }
 }
@@ -137,7 +138,7 @@ private fun PageUI(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp),
+            .padding(MaterialTheme.dimens.paddingExtraLarge),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -147,12 +148,13 @@ private fun PageUI(
             contentDescription = "Onboarding image"
         )
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingExtraLarge))
 
         Text(
             text = stringResource(page.title),
             style = MaterialTheme.typography.h1,
-            color = MaterialTheme.colors.onBackground
+            color = MaterialTheme.colors.onBackground,
+            textAlign = TextAlign.Center
         )
 
         Text(
@@ -161,7 +163,7 @@ private fun PageUI(
             color = MaterialTheme.colors.onBackground,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
     }
 }
 
@@ -173,13 +175,13 @@ private fun GetStartedAndSignIn(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
     ) {
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(vertical = MaterialTheme.dimens.paddingSmall),
+            shape = RoundedCornerShape(MaterialTheme.dimens.paddingDefault),
             onClick = navigateToSignUp,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = MaterialTheme.colors.primary,
@@ -192,7 +194,7 @@ private fun GetStartedAndSignIn(
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingExtraLarge))
 
         AuthOtherWay(
             hint = R.string.alreadyHaveAnAccount,
@@ -200,6 +202,6 @@ private fun GetStartedAndSignIn(
             onAuthWayClick = navigateToSignIn
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.dimens.paddingSmall))
     }
 }

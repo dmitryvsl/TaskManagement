@@ -1,0 +1,8 @@
+<resources>
+    <string name="dashboard">Dashboard</string>
+    <string name="search">Search</string>
+    <string name="overview">Overview</string>
+    <string name="analytics">Analytics</string>
+    <string name="yourProject">Your project</string>
+    <string name="yourRecentTasks">Your recent tasks</string>
+</resources>

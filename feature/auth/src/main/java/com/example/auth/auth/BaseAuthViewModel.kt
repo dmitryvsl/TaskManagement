@@ -2,14 +2,13 @@ package com.example.auth.auth
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseUser
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 
-abstract class BaseAuthViewModel() : ViewModel() {
+abstract class BaseAuthViewModel : ViewModel() {
 
     abstract val error: LiveData<Throwable>
 

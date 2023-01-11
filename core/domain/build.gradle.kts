@@ -9,6 +9,4 @@ android {
 
 dependencies {
     implementation(libs.rxjava)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
 }

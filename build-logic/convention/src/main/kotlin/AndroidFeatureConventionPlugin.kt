@@ -16,8 +16,8 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             dependencies {
                 add("implementation", project(":core:designsystem"))
                 add("implementation", libs.findLibrary("compose.ui").get())
-                add("implementation", libs.findLibrary("compose.ui.tooling").get())
-                add("implementation", libs.findLibrary("compose.ui.tooling.preview").get())
+                add("debugImplementation", libs.findLibrary("compose.ui.tooling").get())
+                add("debugImplementation", libs.findLibrary("compose.ui.tooling.preview").get())
             }
         }
     }

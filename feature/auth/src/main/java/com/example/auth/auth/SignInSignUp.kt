@@ -1,6 +1,5 @@
 package com.example.auth.auth
 
-import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -11,16 +10,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Mail
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -29,12 +23,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.common.components.Overlay
-import com.example.common.components.TextFieldError
-import com.example.common.components.TextFieldState
-import com.example.common.extension.drawColoredShadow
-import com.example.designsystem.theme.Dark
-import com.example.designsystem.theme.White
+import com.example.designsystem.components.Overlay
+import com.example.designsystem.components.textfield.TextFieldError
+import com.example.designsystem.components.textfield.TmOutlinedTextField
+import com.example.designsystem.components.textfield.TextFieldState
+import com.example.designsystem.theme.dimens
 import com.example.domain.exception.*
 import com.example.feature.auth.R
 
@@ -49,39 +42,14 @@ internal fun Email(
     imeAction: ImeAction = ImeAction.Next,
     onImeAction: () -> Unit = {}
 ) {
-    val mediumShape = MaterialTheme.shapes.medium
-    val colorModifier = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-            modifier.drawColoredShadow(color = Dark)
-        else
-            modifier.shadow(
-                elevation = 2.dp,
-                shape = mediumShape,
-                spotColor = Dark.copy(alpha = 0.92f),
-                ambientColor = Dark.copy(alpha = 0.92f),
-            )
-    }
-    OutlinedTextField(
-        modifier = colorModifier
-            .fillMaxWidth()
-            .onFocusChanged { focusState ->
-                emailState.onFocusChange(focusState.isFocused)
-                if (!focusState.isFocused) {
-                    emailState.enableShowErrors()
-                }
-            },
+    TmOutlinedTextField(
+        modifier = modifier,
         value = emailState.text,
         onValueChange = { emailState.text = it },
-        textStyle = MaterialTheme.typography.body2,
-        singleLine = true,
-        maxLines = 1,
-        shape = MaterialTheme.shapes.medium,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = MaterialTheme.colors.background,
-            textColor = MaterialTheme.colors.onBackground,
-            unfocusedBorderColor = White,
-            cursorColor = MaterialTheme.colors.onBackground
-        ),
+        onFocusChanged = { focusState ->
+            emailState.onFocusChange(focusState.isFocused)
+            if (!focusState.isFocused) emailState.enableShowErrors()
+        },
         placeholder = {
             Text(
                 text = stringResource(id = R.string.email),
@@ -91,7 +59,7 @@ internal fun Email(
         isError = emailState.showErrors(),
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.Mail,
+                painter = painterResource(id = R.drawable.ic_mail),
                 contentDescription = null,
                 tint = MaterialTheme.colors.onBackground
             )
@@ -103,7 +71,7 @@ internal fun Email(
         keyboardActions = KeyboardActions(onDone = { onImeAction() }),
     )
     Box(
-        modifier = modifier.height(20.dp)
+        modifier = modifier.height(MaterialTheme.dimens.paddingExtraLarge)
     ) {
         emailState.getError()?.let { error -> TextFieldError(textError = error) }
     }
@@ -121,39 +89,16 @@ internal fun Password(
     onImeAction: () -> Unit = {}
 ) {
     var showPassword by remember { mutableStateOf(true) }
-    val mediumShape = MaterialTheme.shapes.medium
-    val colorModifier = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-            modifier.drawColoredShadow(color = Dark)
-        else
-            modifier.shadow(
-                elevation = 2.dp,
-                shape = mediumShape,
-                spotColor = Dark.copy(alpha = 0.92f),
-                ambientColor = Dark.copy(alpha = 0.92f),
-            )
-    }
-    OutlinedTextField(
-        modifier = colorModifier
-            .fillMaxWidth()
-            .onFocusChanged { focusState ->
-                passwordState.onFocusChange(focusState.isFocused)
-                if (!focusState.isFocused) {
-                    passwordState.enableShowErrors()
-                }
-            },
+    TmOutlinedTextField(
+        modifier = modifier,
         value = passwordState.text,
         onValueChange = { passwordState.text = it },
-        textStyle = MaterialTheme.typography.body2,
-        singleLine = true,
-        maxLines = 1,
-        shape = MaterialTheme.shapes.medium,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = MaterialTheme.colors.background,
-            textColor = MaterialTheme.colors.onBackground,
-            unfocusedBorderColor = White,
-            cursorColor = MaterialTheme.colors.onBackground
-        ),
+        onFocusChanged = { focusState ->
+            passwordState.onFocusChange(focusState.isFocused)
+            if (!focusState.isFocused) {
+                passwordState.enableShowErrors()
+            }
+        },
         placeholder = {
             Text(
                 text = stringResource(id = hint),
@@ -172,11 +117,12 @@ internal fun Password(
         trailingIcon = {
             Icon(
                 modifier = Modifier
+                    .size(MaterialTheme.dimens.minimumTouchTarget / 2f)
                     .clip(CircleShape)
                     .clickable {
                         showPassword = !showPassword
                     },
-                imageVector = if (showPassword) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                painter = painterResource(id = if (showPassword) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
                 contentDescription = null,
                 tint = MaterialTheme.colors.onBackground
             )
@@ -187,7 +133,7 @@ internal fun Password(
         keyboardActions = KeyboardActions(onDone = { onImeAction() })
     )
     Box(
-        modifier = modifier.height(20.dp)
+        modifier = modifier.height(MaterialTheme.dimens.paddingExtraLarge)
     ) {
         passwordState.getError()?.let { error -> TextFieldError(textError = error) }
     }
@@ -210,7 +156,7 @@ internal fun AuthHeader(
             text = stringResource(id = label),
             style = MaterialTheme.typography.h1
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.dimens.paddingSmall))
         Image(
             painter = painterResource(id = R.drawable.ic_signup),
             contentDescription = null
@@ -242,10 +188,10 @@ internal fun LoadingOverlay(
                 )
                 Icon(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(MaterialTheme.dimens.minimumTouchTarget)
                         .clip(CircleShape)
                         .clickable { onCancelClick() }
-                        .padding(12.dp),
+                        .padding(MaterialTheme.dimens.paddingMedium),
                     imageVector = Icons.Outlined.Close,
                     contentDescription = null,
                     tint = MaterialTheme.colors.secondary
@@ -270,7 +216,7 @@ internal fun InformationOverlay(
             color = MaterialTheme.colors.background
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(MaterialTheme.dimens.paddingDefault),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -280,7 +226,7 @@ internal fun InformationOverlay(
                     color = MaterialTheme.colors.onBackground,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
                 Button(onClick = { onCloseClick() }) {
                     Text(
                         text = stringResource(id = R.string.close),

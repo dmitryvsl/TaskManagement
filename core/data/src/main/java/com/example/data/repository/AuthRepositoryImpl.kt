@@ -7,6 +7,8 @@ import com.example.domain.exception.NoInternetException
 import com.example.domain.exception.UserAlreadyExist
 import com.example.domain.exception.UserAuthException
 import com.example.domain.repository.AuthRepository
+import com.example.domain.repository.MutableAuthRepository
+import com.example.domain.repository.UserSignInCheckRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -19,7 +21,7 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val exceptionHandler: FirebaseExceptionHandler
-) : AuthRepository {
+) : AuthRepository, MutableAuthRepository, UserSignInCheckRepository {
     override fun createUser(email: String, password: String): Single<Boolean> =
         Single.create { emitter ->
             firebaseAuth
@@ -57,4 +59,6 @@ class AuthRepositoryImpl @Inject constructor(
                     emitter.onError(exceptionHandler.handleException(e))
                 }
         }
+
+    override fun isSignedIn(): Boolean = firebaseAuth.currentUser != null
 }

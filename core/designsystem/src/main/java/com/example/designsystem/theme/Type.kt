@@ -1,11 +1,11 @@
 package com.example.designsystem.theme
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.example.core.designsystem.R
 
 
@@ -21,36 +21,36 @@ val Typography = Typography(
     h1 = TextStyle(
         fontFamily = SDProText,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp
+        fontSize = MaterialTheme.dimens.h1TextSize
     ),
     h2 = TextStyle(
         fontFamily = SDProText,
         fontWeight = FontWeight.Bold,
-        fontSize = 18.sp
+        fontSize = MaterialTheme.dimens.h2TextSize
     ),
     h3 = TextStyle(
         fontFamily = SDProText,
         fontWeight = FontWeight.Bold,
-        fontSize = 16.sp
+        fontSize = MaterialTheme.dimens.h3TextSize
     ),
     h4 = TextStyle(
         fontFamily = SDProText,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp
+        fontSize = MaterialTheme.dimens.h4TextSize
     ),
     body1 = TextStyle(
         fontFamily = SDProText,
         fontWeight = FontWeight.Bold,
-        fontSize = 14.sp
+        fontSize = MaterialTheme.dimens.body1TextSize
     ),
     body2 = TextStyle(
         fontFamily = SDProText,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
+        fontSize = MaterialTheme.dimens.body2TextSize
     ),
     caption = TextStyle(
         fontFamily = SDProText,
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp
+        fontSize = MaterialTheme.dimens.captionTextSize
     ),
 )

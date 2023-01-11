@@ -16,7 +16,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.auth.auth.*
-import com.example.common.components.AuthOtherWay
+import com.example.designsystem.components.AuthOtherWay
 import com.example.designsystem.theme.*
 import com.example.feature.auth.R
 
@@ -44,14 +44,14 @@ fun SignUpRoute(
             .navigationBarsPadding()
             .imePadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = MaterialTheme.dimens.paddingExtraLarge),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
         AuthHeader(label = R.string.signUp)
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(MaterialTheme.dimens.paddingExtraLarge))
 
         Email(emailState = loginState)
 
@@ -83,7 +83,7 @@ fun SignUpRoute(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
 
         AuthOtherWay(
             hint = R.string.alreadyHaveAnAccount,
