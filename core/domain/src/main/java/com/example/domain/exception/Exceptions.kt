@@ -9,3 +9,8 @@ class UserAuthException : Throwable()
 class InvalidEmailOrPasswordException : Throwable()
 
 class UserNotExist : Throwable()
+
+/**
+ * Throws when response from server is empty
+ */
+class InformationNotFound() : Throwable()

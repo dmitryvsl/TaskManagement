@@ -5,18 +5,26 @@ import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.firestore.FirebaseFirestoreException
 import javax.inject.Inject
 
 class FirebaseExceptionHandler @Inject constructor() {
     /***
      * Map Firebase Exception to Domain Layer Exception
      */
-    fun handleException(t: Throwable): Throwable {
+    fun handleAuthException(t: Throwable): Throwable {
         return when (t) {
             is FirebaseNetworkException -> NoInternetException()
             is FirebaseAuthUserCollisionException -> UserAlreadyExist()
             is FirebaseAuthInvalidCredentialsException -> InvalidEmailOrPasswordException()
             is FirebaseAuthInvalidUserException -> UserNotExist()
+            else -> t
+        }
+    }
+
+    fun handleFirestoreException(t: Throwable): Throwable{
+        return when (t){
+            is FirebaseFirestoreException -> NoInternetException()
             else -> t
         }
     }
