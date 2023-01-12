@@ -5,4 +5,8 @@
     <string name="analytics">Analytics</string>
     <string name="yourProject">Your project</string>
     <string name="yourRecentTasks">Your recent tasks</string>
+    <string name="noInternet">No internet connection. Please, try again</string>
+    <string name="tryAgain">Try again</string>
+    <string name="noOneProjectCreated">No one project created yet</string>
+    <string name="noOneTaskCreated">No one task created yet</string>
 </resources>

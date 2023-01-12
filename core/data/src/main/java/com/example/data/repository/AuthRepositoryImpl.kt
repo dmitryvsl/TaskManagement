@@ -2,18 +2,11 @@ package com.example.data.repository
 
 import android.util.Log
 import com.example.data.utils.FirebaseExceptionHandler
-import com.example.domain.exception.InvalidEmailOrPasswordException
-import com.example.domain.exception.NoInternetException
-import com.example.domain.exception.UserAlreadyExist
 import com.example.domain.exception.UserAuthException
 import com.example.domain.repository.AuthRepository
 import com.example.domain.repository.MutableAuthRepository
 import com.example.domain.repository.UserSignInCheckRepository
-import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseUser
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -33,7 +26,7 @@ class AuthRepositoryImpl @Inject constructor(
                         emitter.onError(UserAuthException())
                 }
                 .addOnFailureListener { e ->
-                    emitter.onError(exceptionHandler.handleException(e))
+                    emitter.onError(exceptionHandler.handleAuthException(e))
                 }
         }
 
@@ -46,7 +39,7 @@ class AuthRepositoryImpl @Inject constructor(
                     else
                         emitter.onError(UserAuthException())
                 }
-                .addOnFailureListener { e -> emitter.onError(exceptionHandler.handleException(e)) }
+                .addOnFailureListener { e -> emitter.onError(exceptionHandler.handleAuthException(e)) }
         }
 
 
@@ -56,7 +49,7 @@ class AuthRepositoryImpl @Inject constructor(
                 .addOnSuccessListener { emitter.onSuccess(true) }
                 .addOnFailureListener { e ->
                     Log.d("TAG", "sendResetPasswordEmail: $e")
-                    emitter.onError(exceptionHandler.handleException(e))
+                    emitter.onError(exceptionHandler.handleAuthException(e))
                 }
         }
 

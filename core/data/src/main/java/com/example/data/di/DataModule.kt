@@ -11,6 +11,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+
 
 @Module
 @InstallIn(SingletonComponent::class)

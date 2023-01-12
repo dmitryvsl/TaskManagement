@@ -29,6 +29,9 @@ class DashboardHomeViewModel @Inject constructor(
     private val _loading: MutableLiveData<Boolean> = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
 
+    private val _error: MutableLiveData<Throwable> = MutableLiveData()
+    val error: LiveData<Throwable> = _error
+
     private var disposable: Disposable? = null
 
     init {
@@ -36,12 +39,13 @@ class DashboardHomeViewModel @Inject constructor(
     }
 
     fun fetchProject() {
+        _error.value = null
         val job = viewModelScope.launch {
             delay(300L)
             _loading.value = true
         }
         disposable = projectRepository
-            .fetchProjectInfo("Capi creative")
+            .fetchProjectInfo("Capi creative2")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnEvent { _, _ ->
@@ -53,7 +57,9 @@ class DashboardHomeViewModel @Inject constructor(
                     _project.value = project
                 }
 
-                override fun onError(e: Throwable) {}
+                override fun onError(e: Throwable) {
+                    _error.value = e
+                }
 
             })
     }

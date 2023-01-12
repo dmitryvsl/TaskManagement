@@ -1,5 +1,6 @@
 package com.example.dashboard
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -36,6 +37,11 @@ import com.example.designsystem.theme.Purple
 import com.example.designsystem.theme.dimens
 import com.example.feature.dashboard.R
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.designsystem.components.information.ErrorMessageWithAction
+import com.example.designsystem.components.information.InformationMessage
+import com.example.domain.exception.InformationNotFound
+import com.example.domain.exception.NoInternetException
+import com.example.domain.model.Project
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -46,6 +52,7 @@ fun DashboardRoute(
     val modifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
     val project by viewModel.project.observeAsState()
     val loading by viewModel.loading.observeAsState()
+    val error by viewModel.error.observeAsState()
     Column(
         modifier = Modifier
             .statusBarsPadding()
@@ -90,27 +97,12 @@ fun DashboardRoute(
             }
 
             item(key = "project") {
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(150.dp + MaterialTheme.dimens.paddingMedium * 3)
-                ) {
-                    loading?.let { loading ->
-                        if (loading) Loading(Modifier.fillMaxSize())
-                    }
-                    project?.let { project ->
-                        val completedTasks =
-                            remember { project.tasks.filter { task -> task.done }.size }
-                        ProjectRow(
-                            modifier = modifier,
-                            title = project.title,
-                            startDate = project.startDate,
-                            endDate = project.endDate,
-                            completedTasks = completedTasks,
-                            totalTasks = project.tasks.size
-                        )
-                    }
-                }
+                ProjectRow(
+                    loading = loading,
+                    project = project,
+                    modifier = modifier,
+                    error = error,
+                    onRetryLoading = { viewModel.fetchProject() })
             }
 
             item("task title") {
@@ -131,6 +123,8 @@ fun DashboardRoute(
                 }
             }
             project?.let { project ->
+                if (project.tasks.isEmpty())
+                    item { InformationMessage(text = stringResource(id = R.string.noOneTaskCreated)) }
                 project.tasks.forEach { task ->
                     if (!task.done)
                         item(task.hashCode()) {
@@ -146,11 +140,67 @@ fun DashboardRoute(
                         }
                 }
             }
+            error?.let { error ->
+                if (error.javaClass.isAssignableFrom(InformationNotFound::class.java))
+                    item {
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(150.dp)
+                        ) {
+                            InformationMessage(
+                                text = stringResource(R.string.noOneTaskCreated),
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    }
+            }
         }
-
     }
+}
 
-
+@Composable
+private fun ProjectRow(
+    loading: Boolean?,
+    project: Project?,
+    error: Throwable?,
+    modifier: Modifier,
+    onRetryLoading: () -> Unit,
+) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .height(150.dp + MaterialTheme.dimens.paddingMedium * 3)
+    ) {
+        loading?.let { loading ->
+            if (loading) Loading(Modifier.fillMaxSize())
+        }
+        project?.let { project ->
+            val completedTasks =
+                remember { project.tasks.filter { task -> task.done }.size }
+            ProjectRow(
+                modifier = modifier,
+                title = project.title,
+                startDate = project.startDate,
+                endDate = project.endDate,
+                completedTasks = completedTasks,
+                totalTasks = project.tasks.size
+            )
+        }
+        error?.let { error ->
+            when (error) {
+                is NoInternetException -> ErrorMessageWithAction(
+                    message = stringResource(R.string.noInternet),
+                    actionMessage = stringResource(R.string.tryAgain),
+                    onActionClick = onRetryLoading
+                )
+                is InformationNotFound -> InformationMessage(
+                    text = stringResource(R.string.noOneProjectCreated),
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+    }
 }
 
 @Composable

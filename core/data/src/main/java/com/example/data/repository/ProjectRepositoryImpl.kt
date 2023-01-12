@@ -1,11 +1,15 @@
 package com.example.data.repository
 
+import android.util.Log
+import com.example.data.utils.FirebaseExceptionHandler
+import com.example.domain.exception.InformationNotFound
 import com.example.domain.model.Project
 import com.example.domain.model.Task
 import com.example.domain.repository.ProjectRepository
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.Source
 import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -17,16 +21,18 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class ProjectRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val exceptionHandler: FirebaseExceptionHandler
 ) : ProjectRepository {
     override fun fetchProjectInfo(workspace: String): Single<Project> {
         return Single.create { emitter ->
             runBlocking {
-                    delay(10000)
+                delay(10000)
                 try {
                     val project = withContext(Dispatchers.Default) { fetchProject(workspace) }
                     val projectName = project.id
-                    val tasks = withContext(Dispatchers.Default) { fetchTasks(workspace, projectName) }
+                    val tasks =
+                        withContext(Dispatchers.Default) { fetchTasks(workspace, projectName) }
                     emitter.onSuccess(
                         Project(
                             title = projectName,
@@ -44,7 +50,7 @@ class ProjectRepositoryImpl @Inject constructor(
                         )
                     )
                 } catch (e: Exception) {
-                    emitter.onError(e)
+                    emitter.onError(exceptionHandler.handleFirestoreException(e))
                 }
             }
 
@@ -57,8 +63,14 @@ class ProjectRepositoryImpl @Inject constructor(
                 .collection("workspaces").document(workspace)
                 .collection("projects")
                 .limit(1)
-                .get()
-                .addOnSuccessListener { result -> cont.resume(result.documents[0]) }
+                .get(Source.SERVER)
+                .addOnSuccessListener { result ->
+                    if (result.isEmpty)
+                        cont.resumeWithException(InformationNotFound())
+                    else
+                        cont.resume(result.documents[0])
+
+                }
                 .addOnFailureListener { e -> cont.resumeWithException(e) }
         }
 
@@ -68,7 +80,7 @@ class ProjectRepositoryImpl @Inject constructor(
                 .collection("workspaces").document(workspace)
                 .collection("projects").document(projectTitle)
                 .collection("tasks")
-                .get()
+                .get(Source.SERVER)
                 .addOnSuccessListener { result -> cont.resume(result) }
                 .addOnFailureListener { e -> cont.resumeWithException(e) }
 

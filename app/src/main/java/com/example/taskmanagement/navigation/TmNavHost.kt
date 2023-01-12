@@ -50,7 +50,7 @@ fun TmNavHost(
             navigateToDashboard = {
                 onAuthPassed()
                 navController.navigateToDashboard(
-                    NavOptions.Builder().setPopUpTo(signUpRoute, true).build()
+                    NavOptions.Builder().setPopUpTo(0, true).build()
                 )
             }
         )
