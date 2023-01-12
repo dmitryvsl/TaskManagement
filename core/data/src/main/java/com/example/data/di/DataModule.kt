@@ -1,12 +1,10 @@
 package com.example.data.di
 
 import com.example.data.repository.AuthRepositoryImpl
-import com.example.data.utils.ConnectivityManagerNetworkMonitor
-import com.example.domain.repository.NetworkMonitor
-import com.example.domain.repository.AuthRepository
-import com.example.domain.repository.MutableAuthRepository
-import com.example.domain.repository.UserSignInCheckRepository
+import com.example.data.repository.ProjectRepositoryImpl
+import com.example.domain.repository.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -28,12 +26,17 @@ interface DataModule {
     fun bindUserSignInCheckRepository(authRepository: AuthRepositoryImpl): UserSignInCheckRepository
 
     @Binds
-    fun bindNetworkMonitor(networkMonitor: ConnectivityManagerNetworkMonitor): NetworkMonitor
+    fun bindProjectRepository(projectRepository: ProjectRepositoryImpl): ProjectRepository
 
     companion object {
         @Provides
         @Singleton
         fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+        @Provides
+        @Singleton
+        fun provideFirebaseDatabase(): FirebaseFirestore =
+            FirebaseFirestore.getInstance()
     }
 
 }

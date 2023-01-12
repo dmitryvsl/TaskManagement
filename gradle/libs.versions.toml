@@ -62,6 +62,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 
 #Test
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }

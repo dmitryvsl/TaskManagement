@@ -1,8 +1,6 @@
 package com.example.taskmanagement
 
-import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
@@ -15,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,7 +26,6 @@ import com.example.designsystem.theme.Gray
 import com.example.designsystem.theme.TaskManagementTheme
 import com.example.designsystem.theme.dimens
 import com.example.designsystem.utils.animationDuration
-import com.example.domain.repository.NetworkMonitor
 import com.example.domain.repository.UserSignInCheckRepository
 import com.example.taskmanagement.navigation.TmNavHost
 import com.example.taskmanagement.utils.SharedPreferencesUtils
@@ -44,19 +40,11 @@ class MainActivity : ComponentActivity() {
     lateinit var sharedPreferencesUtils: SharedPreferencesUtils
 
     @Inject
-    lateinit var networkMonitor: NetworkMonitor
-
-    @Inject
     lateinit var userSignInCheckRepository: UserSignInCheckRepository
-
-    private val isOnline: MutableState<Boolean> = mutableStateOf(true)
-    private var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        disposable =
-            networkMonitor.isOnline.subscribe { isOnline -> this.isOnline.value = isOnline }
 
         setContent {
             TaskManagementTheme {
@@ -68,17 +56,11 @@ class MainActivity : ComponentActivity() {
                         mutableStateOf(userSignInCheckRepository.isSignedIn())
                     }
                     val appState = rememberAppState()
-                    val notConnected = stringResource(R.string.notConnected)
                     appState.uiController.setSystemBarsColor(
                         darkIcons = !isSystemInDarkTheme(),
                         color = Color.Transparent
                     )
-                    LaunchedEffect(isOnline.value) {
-                        if (!isOnline.value)
-                            appState.snackbarHostState.showSnackbar(notConnected)
-                    }
                     Scaffold(
-                        snackbarHost = { SnackbarHost(appState.snackbarHostState) },
                         bottomBar = {
                             if (appState.shouldShowBottomBar) TmBottomBar(appState = appState)
                         }
@@ -104,21 +86,11 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun TmBottomBar(appState: AppState) {
-        val navigationBarInsets =
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-        val bottomBarOffset by animateDpAsState(
-            targetValue = if (appState.shouldShowBottomBar) (0.dp - navigationBarInsets) else MaterialTheme.dimens.bottomNavBarSize + navigationBarInsets,
-            animationSpec = tween(animationDuration)
-        )
-        val bottomBarHeight by animateDpAsState(
-            if (appState.shouldShowBottomBar) MaterialTheme.dimens.bottomNavBarSize else 0.dp,
-            tween(animationDuration)
-        )
         Surface(
             modifier = Modifier
-                .offset(y = bottomBarOffset)
                 .fillMaxWidth()
-                .height(bottomBarHeight)
+                .navigationBarsPadding()
+                .height(MaterialTheme.dimens.bottomNavBarSize)
                 .padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
                 .customShadow(),
             shape = MaterialTheme.shapes.medium,
@@ -169,10 +141,5 @@ class MainActivity : ComponentActivity() {
             }
 
         }
-    }
-
-    override fun onDestroy() {
-        disposable?.dispose()
-        super.onDestroy()
     }
 }

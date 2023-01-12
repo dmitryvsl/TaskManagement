@@ -26,18 +26,16 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @Composable
 fun rememberAppState(
     navController: NavHostController = rememberAnimatedNavController(),
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     uiController: SystemUiController = rememberSystemUiController()
 
 ): AppState {
-    return remember(navController, snackbarHostState, uiController) {
-        AppState(navController, snackbarHostState, uiController)
+    return remember(navController, uiController) {
+        AppState(navController, uiController)
     }
 }
 
 class AppState(
     val navController: NavHostController,
-    val snackbarHostState: SnackbarHostState,
     val uiController: SystemUiController
 ) {
     private val currentDestination: NavDestination?
@@ -57,6 +55,7 @@ class AppState(
         @Composable get() = currentDestination?.route in topLevelDestinationRoutes
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.values().asList()
+
 
     // Routes to Top Level Destination composables
     private val topLevelDestinationRoutes: List<String> =

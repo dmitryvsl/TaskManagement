@@ -34,6 +34,11 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ProjectCard(
+    title: String,
+    startDate: String,
+    endDate: String,
+    completedTasks: Int,
+    totalTasks: Int,
     modifier: Modifier = Modifier
 ) {
     val painter = painterResource(R.drawable.avatar_placeholder)
@@ -55,12 +60,12 @@ fun ProjectCard(
                 .padding(MaterialTheme.dimens.paddingExtraLarge),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            ProjectTitleAndMembers(title = "Mane UiKit", members = teammates)
+            ProjectTitleAndMembers(title = title, members = teammates)
             ProjectCalendarLine(
-                startDate = "11/01/2023",
-                endDate = "11/01/2023"
+                startDate = startDate,
+                endDate = endDate
             )
-            ProjectProgress(completedTasks = 24, totalTasks = 48)
+            ProjectProgress(completedTasks = completedTasks, totalTasks = totalTasks)
         }
 
     }

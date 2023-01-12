@@ -53,7 +53,7 @@ fun TaskCard(
                 color = LightGray,
             ) {
                 Icon(
-                    modifier = Modifier.padding(MaterialTheme.dimens.paddingSmall),
+                    modifier = Modifier.padding(MaterialTheme.dimens.paddingDefault),
                     painter = icon,
                     tint = MaterialTheme.colors.onBackground,
                     contentDescription = null
