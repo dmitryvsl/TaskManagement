@@ -30,10 +30,10 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 fun TmNavHost(
     navController: NavHostController,
     onBackClick: () -> Unit,
-    onOnboardingPassed: () -> Unit,
-    onAuthPassed: () -> Unit,
     startDestination: String,
     authGraphStartDestination: String,
+    onOnboardingPassed: () -> Unit,
+    onAuthPassed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimatedNavHost(
@@ -56,7 +56,6 @@ fun TmNavHost(
         )
         dashboardGraph(
             navController = navController,
-            onBackClick = onBackClick,
             signInRoute = signInRoute,
             signUpRoute = signUpRoute,
         )

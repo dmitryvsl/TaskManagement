@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.core.designsystem.R
 import com.example.designsystem.extension.customShadow
+import com.example.designsystem.theme.Dark
 import com.example.designsystem.theme.Gray
 import com.example.designsystem.theme.LightGray
 import com.example.designsystem.theme.dimens
@@ -55,7 +56,7 @@ fun TaskCard(
                 Icon(
                     modifier = Modifier.padding(MaterialTheme.dimens.paddingDefault),
                     painter = icon,
-                    tint = MaterialTheme.colors.onBackground,
+                    tint = Dark,
                     contentDescription = null
                 )
             }

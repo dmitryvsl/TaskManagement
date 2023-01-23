@@ -1,4 +1,4 @@
-package com.example.dashboard
+package com.example.dashboard.home
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -45,7 +45,7 @@ class DashboardHomeViewModel @Inject constructor(
             _loading.value = true
         }
         disposable = projectRepository
-            .fetchProjectInfo("Capi creative2")
+            .fetchProjectInfo("Capi creative")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnEvent { _, _ ->
@@ -60,7 +60,6 @@ class DashboardHomeViewModel @Inject constructor(
                 override fun onError(e: Throwable) {
                     _error.value = e
                 }
-
             })
     }
 

@@ -49,6 +49,7 @@ fun ProjectCard(
             .height(150.dp)
             .customShadow(),
         shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colors.background,
         border = BorderStroke(
             width = 1.dp,
             color = if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else MaterialTheme.colors.background

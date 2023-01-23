@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
@@ -76,12 +77,13 @@ fun TmOutlinedTextField(
                 .onFocusChanged { focusState -> onFocusChanged(focusState) },
             visualTransformation = visualTransformation,
             interactionSource = interactionSource,
+            cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
             enabled = true,
             singleLine = true,
             maxLines = 1,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            textStyle = MaterialTheme.typography.body2,
+            textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
         ) { innerTextField ->
             TextFieldDefaults.TextFieldDecorationBox(
                 value = value,
