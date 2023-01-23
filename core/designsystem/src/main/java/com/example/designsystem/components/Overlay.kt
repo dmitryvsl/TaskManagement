@@ -15,12 +15,16 @@ import com.example.designsystem.theme.Dark
 @Composable
 fun Overlay(
     color: Color = Dark.copy(alpha = 0.1f),
+    onClick: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .clickable(interactionSource = MutableInteractionSource(), indication = null) { }
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) { onClick() }
             .zIndex(1f)
             .background(color),
         contentAlignment = Alignment.Center

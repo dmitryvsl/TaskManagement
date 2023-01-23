@@ -21,6 +21,7 @@ import com.example.auth.navigation.authNavigationRouteGraph
 import com.example.auth.navigation.onboardingRoute
 import com.example.auth.navigation.signUpRoute
 import com.example.dashboard.navigation.dashboardGraph
+import com.example.designsystem.components.Overlay
 import com.example.designsystem.extension.customShadow
 import com.example.designsystem.theme.Gray
 import com.example.designsystem.theme.TaskManagementTheme

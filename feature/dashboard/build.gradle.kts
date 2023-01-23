@@ -17,6 +17,7 @@ dependencies {
 
     // Accompanist
     implementation(libs.accompanist.navigation)
+    implementation(libs.accompanist.pager)
 
     //Rxjava2
     implementation(libs.rxjava)
