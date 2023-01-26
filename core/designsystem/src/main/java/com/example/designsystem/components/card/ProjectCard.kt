@@ -2,15 +2,36 @@ package com.example.designsystem.components.card
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,31 +39,36 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.core.designsystem.R
 import com.example.designsystem.extension.customShadow
 import com.example.designsystem.theme.Gray
 import com.example.designsystem.theme.LightGray
 import com.example.designsystem.theme.dimens
 import com.example.designsystem.utils.animationDuration
+import com.example.domain.model.Project
+import com.example.domain.model.User
 import kotlin.math.roundToInt
 
 @Composable
 fun ProjectCard(
-    title: String,
-    startDate: String,
-    endDate: String,
-    completedTasks: Int,
-    totalTasks: Int,
+    project: Project,
     modifier: Modifier = Modifier
 ) {
-    val painter = painterResource(R.drawable.avatar_placeholder)
-    val teammates = listOf(painter, painter, painter, painter, painter)
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -61,12 +87,15 @@ fun ProjectCard(
                 .padding(MaterialTheme.dimens.paddingExtraLarge),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            ProjectTitleAndMembers(title = title, members = teammates)
+            val completedTasksCount =
+                remember { project.tasks.filter { task -> task.done }.size }
+
+            ProjectTitleAndMembers(title = project.title, members = project.members)
             ProjectCalendarLine(
-                startDate = startDate,
-                endDate = endDate
+                startDate = project.startDate,
+                endDate = project.endDate
             )
-            ProjectProgress(completedTasks = completedTasks, totalTasks = totalTasks)
+            ProjectProgress(completedTasks = completedTasksCount, totalTasks = project.tasks.size)
         }
 
     }
@@ -75,8 +104,9 @@ fun ProjectCard(
 @Composable
 private fun ProjectTitleAndMembers(
     title: String,
-    members: List<Painter>
+    members: List<User>
 ) {
+    val painter = painterResource(R.drawable.avatar_placeholder)
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -92,34 +122,48 @@ private fun ProjectTitleAndMembers(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            members.take(3).forEachIndexed { index, painter ->
-                val offsetX = (-6 * index).dp
-                Image(
-                    modifier = Modifier
-                        .size(MaterialTheme.dimens.minimumTouchTarget / 1.5f)
-                        .offset(offsetX),
-                    painter = painter,
-                    contentDescription = null
-                )
-            }
-
-            val restTeammatesCount = remember { members.size - 3 }
-            if (restTeammatesCount > 0) {
-                Box(
-                    modifier = Modifier
-                        .size(MaterialTheme.dimens.minimumTouchTarget / 1.5f)
-                        .offset((-6 * 3).dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colors.secondary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "+$restTeammatesCount",
-                        style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.onSecondary
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                members.take(3).forEachIndexed { index, user ->
+                    val offsetX = (MaterialTheme.dimens.minimumTouchTarget / 2) * index * -1f
+                    AsyncImage(
+                        modifier = Modifier
+                            .offset(offsetX)
+                            .zIndex(offsetX.value)
+                            .size(MaterialTheme.dimens.minimumTouchTarget / 1.5f)
+                            .clip(CircleShape),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(user.avatar)
+                            .crossfade(true)
+                            .build(),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null,
+                        placeholder = painter
                     )
                 }
+
+                val restTeammatesCount = remember { members.size - 3 }
+                if (restTeammatesCount > 0) {
+                    Box(
+                        modifier = Modifier
+                            .zIndex(4f)
+                            .size(MaterialTheme.dimens.minimumTouchTarget / 1.5f)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colors.secondary),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "+$restTeammatesCount",
+                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colors.onSecondary
+                        )
+                    }
+                }
             }
+
+
         }
     }
 }
@@ -218,7 +262,8 @@ fun ProjectProgress(
     totalTasks: Int,
     completedTasks: Int
 ) {
-    val progress = remember { (completedTasks / totalTasks.toFloat() * 100).roundToInt() }
+    val progress =
+        if (totalTasks != 0) remember { (completedTasks / totalTasks.toFloat() * 100).roundToInt() } else remember { 100 }
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,

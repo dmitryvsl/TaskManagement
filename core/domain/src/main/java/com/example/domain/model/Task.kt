@@ -6,4 +6,5 @@ data class Task(
     val endDate: String,
     val priority: Long,
     val done: Boolean,
+    val color: Long,
 )

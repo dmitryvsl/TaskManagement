@@ -1,5 +1,6 @@
 package com.example.designsystem.components.card
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -11,7 +12,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,12 +24,14 @@ import com.example.designsystem.extension.customShadow
 import com.example.designsystem.theme.Dark
 import com.example.designsystem.theme.Gray
 import com.example.designsystem.theme.LightGray
+import com.example.designsystem.theme.LightGreen
 import com.example.designsystem.theme.dimens
 
 @Composable
 fun TaskCard(
     modifier: Modifier = Modifier,
     icon: Painter,
+    color: Color,
     title: String,
     date: String
 ) {
@@ -51,7 +56,7 @@ fun TaskCard(
             Surface(
                 modifier = Modifier.size(MaterialTheme.dimens.minimumTouchTarget),
                 shape = CircleShape,
-                color = LightGray,
+                color = color,
             ) {
                 Icon(
                     modifier = Modifier.padding(MaterialTheme.dimens.paddingDefault),
@@ -81,6 +86,7 @@ fun TaskCard(
                         contentDescription = null,
                         tint = Gray
                     )
+
                     Spacer(modifier = Modifier.width(MaterialTheme.dimens.paddingSmall))
                     Text(
                         text = "Deadline: $date",

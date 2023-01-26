@@ -26,9 +26,9 @@ import com.example.designsystem.theme.dimens
 fun TmTabLayout(
     selectedItemIndex: Int,
     items: List<String>,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     tabWidth: Dp = 110.dp,
-    onClick: (Int) -> Unit
 ) {
     val indicatorOffset by animateDpAsState(
         targetValue = tabWidth * selectedItemIndex,
@@ -37,7 +37,7 @@ fun TmTabLayout(
 
     Box(
         modifier = modifier
-            .clip(MaterialTheme.shapes.medium)
+            .clip(MaterialTheme.shapes.small)
             .height(intrinsicSize = IntrinsicSize.Min),
     ) {
         TabIndicator(
@@ -75,7 +75,7 @@ private fun TabIndicator(
             .fillMaxHeight()
             .width(width = indicatorWidth)
             .offset(x = indicatorOffset)
-            .clip(MaterialTheme.shapes.medium)
+            .clip(MaterialTheme.shapes.small)
             .background(color = indicatorColor)
     )
 }
@@ -94,7 +94,7 @@ fun TabItem(
 
     Text(
         modifier = Modifier
-            .clip(CircleShape)
+            .clip(MaterialTheme.shapes.small)
             .clickable { onClick() }
             .width(tabWidth)
             .padding(

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.BaseViewModel
 import com.example.domain.model.Project
 import com.example.domain.repository.ProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,46 +22,32 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardHomeViewModel @Inject constructor(
     private val projectRepository: ProjectRepository
-) : ViewModel() {
+) : BaseViewModel<Project>() {
 
-    private val _project: MutableLiveData<Project> = MutableLiveData()
-    var project: LiveData<Project> = _project
-
-    private val _loading: MutableLiveData<Boolean> = MutableLiveData(false)
-    val loading: LiveData<Boolean> = _loading
-
-    private val _error: MutableLiveData<Throwable> = MutableLiveData()
-    val error: LiveData<Throwable> = _error
-
-    private var disposable: Disposable? = null
+    override val error: MutableLiveData<Throwable> = MutableLiveData()
+    override val data: MutableLiveData<Project> = MutableLiveData()
+    override val loading: MutableLiveData<Boolean> = MutableLiveData()
+    override var disposable: Disposable? = null
 
     init {
         fetchProject()
     }
 
     fun fetchProject() {
-        _error.value = null
-        val job = viewModelScope.launch {
-            delay(300L)
-            _loading.value = true
-        }
-        disposable = projectRepository
-            .fetchProjectInfo("Capi creative")
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnEvent { _, _ ->
-                job.cancel()
-                _loading.value = false
-            }
-            .subscribeWith(object : DisposableSingleObserver<Project>() {
-                override fun onSuccess(project: Project) {
-                    _project.value = project
-                }
+        makeSingleCall(
+            projectRepository.fetchProjects("Capi creative").map { projects -> projects.last() })
+    }
 
-                override fun onError(e: Throwable) {
-                    _error.value = e
-                }
-            })
+    override fun setLoadingValue(value: Boolean) {
+        loading.value = value
+    }
+
+    override fun setErrorValue(value: Throwable?) {
+        error.value = value
+    }
+
+    override fun setData(value: Project?) {
+        data.value = value
     }
 
 }

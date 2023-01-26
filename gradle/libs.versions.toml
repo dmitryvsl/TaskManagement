@@ -2,9 +2,10 @@
 
 #Androidx
 annotation = "1.5.0"
-coreKtx = "1.9.0"
-junitExt = "1.1.4"
 espresso = "3.5.0"
+coreKtx = "1.9.0"
+lifecycleViewModel = "2.5.1"
+junitExt = "1.1.4"
 
 #Android
 material = "1.8.0-beta01"
@@ -26,6 +27,7 @@ rxjava = "2.1.1"
 agp = "7.3.1"
 accompanist = "0.28.0"
 daggerHilt = "2.44"
+coil = "2.2.2"
 kotlin = "1.7.20"
 
 junit4 = "4.13.2"
@@ -33,15 +35,20 @@ desugarJdkLibs = "1.2.0"
 
 [libraries]
 
+coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
 #Android
 android-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 android-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+android-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewModel" }
+android-lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-core", version.ref = "lifecycleViewModel" }
 
 #Accompanist
 accompanist-pager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicators = { group = "com.google.accompanist", name = "accompanist-pager-indicators", version.ref = "accompanist" }
 accompanist-navigation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "accompanist" }
-accompanist-systemui = {group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+accompanist-systemui = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+
 #Compose
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }

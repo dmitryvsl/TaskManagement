@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.common.BaseViewModel
 import com.example.designsystem.components.Overlay
 import com.example.designsystem.components.textfield.TextFieldError
 import com.example.designsystem.components.textfield.TmOutlinedTextField
@@ -244,7 +245,7 @@ internal fun InformationOverlay(
  */
 @Composable
 fun CallStateRepresenter(
-    viewModel: BaseAuthViewModel,
+    viewModel: BaseViewModel<Boolean>,
     onCallSuccess: () -> Unit,
     noInternetExceptionMessage: String = stringResource(R.string.noInternetConnection),
     invalidEmailOrPasswordExceptionMessage: String = stringResource(R.string.invalidEmailOrPassword),
@@ -255,7 +256,7 @@ fun CallStateRepresenter(
 ) {
     val loading by viewModel.loading.observeAsState(false)
     val error by viewModel.error.observeAsState()
-    val isCallSuccess by viewModel.isCallSuccess.observeAsState(false)
+    val isCallSuccess by viewModel.data.observeAsState(false)
 
     val onError: @Composable (message: String) -> Unit = { message ->
         InformationOverlay(message = message) { viewModel.clearError() }
@@ -277,6 +278,6 @@ fun CallStateRepresenter(
     }
 
     if (loading) LoadingOverlay {
-        viewModel.cancelUserCreation()
+        viewModel.setLoadingValue(false)
     }
 }

@@ -5,4 +5,5 @@ data class Project(
     val startDate: String,
     val endDate: String,
     val tasks: List<Task>,
+    val members: List<User>,
 )
