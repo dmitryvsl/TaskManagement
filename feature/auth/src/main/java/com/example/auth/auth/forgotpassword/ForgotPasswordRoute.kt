@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -23,7 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.auth.auth.CallStateRepresenter
 import com.example.auth.auth.Email
 import com.example.auth.auth.EmailState
-import com.example.auth.auth.InformationOverlay
+import com.example.auth.auth.InformationDialog
 import com.example.designsystem.theme.dimens
 import com.example.feature.auth.R
 
@@ -39,7 +38,7 @@ fun ForgotPasswordRoute(
     val emailState = remember { EmailState() }
     var showInformationOverlay by remember { mutableStateOf(false) }
 
-    if (showInformationOverlay) InformationOverlay(message = stringResource(R.string.messageWasSentToYourEmail)) {
+    if (showInformationOverlay) InformationDialog(message = stringResource(R.string.messageWasSentToYourEmail)) {
         showInformationOverlay = !showInformationOverlay
         onBackClick()
     }

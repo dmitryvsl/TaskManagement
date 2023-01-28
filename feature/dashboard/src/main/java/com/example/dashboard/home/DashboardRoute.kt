@@ -1,14 +1,37 @@
 package com.example.dashboard.home
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -16,6 +39,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.common.DataState
 import com.example.dashboard.home.components.CurrentProject
 import com.example.dashboard.home.components.SearchRow
 import com.example.dashboard.home.components.SearchState
@@ -41,11 +65,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardRoute(
     viewModel: DashboardHomeViewModel = hiltViewModel(),
+    navigateToProjectsList: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    val project by viewModel.project.observeAsState()
-    val loading by viewModel.loading.observeAsState()
-    val error by viewModel.error.observeAsState()
+    val project by viewModel.data.observeAsState()
+    val state by viewModel.data.observeAsState(DataState.Initial())
 
     val contentModifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
 
@@ -85,7 +109,7 @@ fun DashboardRoute(
 
                 SearchRow(modifier = contentModifier, searchState, focusManager)
 
-                HeaderRow(contentModifier, tabs, selected) { page ->
+                Tabs(contentModifier, tabs, selected) { page ->
                     setSelected(page)
                     coroutineScope.launch { pagerState.animateScrollToPage(page) }
                 }
@@ -113,10 +137,9 @@ fun DashboardRoute(
                         0 -> CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
                             DashboardHomeScreen(
                                 modifier = contentModifier,
-                                loading = loading,
-                                project = project,
-                                error = error,
-                                onRetryLoading = { viewModel.fetchProject() }
+                                state = state,
+                                onRetryLoading = { viewModel.fetchProject() },
+                                navigateToProjectsList = navigateToProjectsList
                             )
                         }
 
@@ -132,17 +155,15 @@ fun DashboardRoute(
 
 @Composable
 fun DashboardHomeScreen(
-    loading: Boolean?,
-    error: Throwable?,
-    project: Project?,
+    state: DataState<Project>,
     onRetryLoading: () -> Unit,
+    navigateToProjectsList: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
-    if (loading != null && loading) Loading(Modifier.fillMaxSize())
-
-    error?.let { error ->
-        when (error) {
+    when (state) {
+        is DataState.Initial -> {}
+        is DataState.Error -> when (state.t) {
             is NoInternetException ->
                 ErrorMessageWithAction(
                     message = stringResource(R.string.noInternet),
@@ -151,22 +172,34 @@ fun DashboardHomeScreen(
                 )
 
             is InformationNotFound -> InformationMessage(text = stringResource(R.string.noOneProjectCreated))
-        }
-    }
 
-    project?.let { project ->
-        ProjectAndTasks(project, modifier = modifier)
+            else ->
+                ErrorMessageWithAction(
+                    message = stringResource(R.string.errorOccurred),
+                    actionMessage = stringResource(R.string.tryAgain),
+                    onActionClick = onRetryLoading
+                )
+        }
+
+        is DataState.Success -> ProjectAndTasks(
+            state.data,
+            modifier = modifier,
+            navigateToProjectsList = navigateToProjectsList
+        )
+
+        is DataState.Loading -> Loading(Modifier.fillMaxSize())
     }
 }
 
 @Composable
 private fun ProjectAndTasks(
     project: Project,
+    navigateToProjectsList: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listTitleModifier =
         Modifier
-            .clickable { }
+            .clickable { navigateToProjectsList() }
             .padding(MaterialTheme.dimens.paddingExtraLarge)
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -194,7 +227,10 @@ private fun ProjectAndTasks(
         }
 
         item {
-            if (project.tasks.isEmpty()) InformationMessage(text = stringResource(id = R.string.noOneTaskCreated))
+            if (project.tasks.isEmpty()) InformationMessage(
+                text = stringResource(R.string.noOneTaskCreated),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         items(
@@ -207,9 +243,10 @@ private fun ProjectAndTasks(
                         horizontal = MaterialTheme.dimens.paddingExtraLarge,
                         vertical = MaterialTheme.dimens.paddingSmall
                     ),
-                    icon = painterResource(com.example.core.designsystem.R.drawable.ic_calendar),
+                    icon = painterResource(R.drawable.ic_dashboard),
                     title = task.name,
-                    date = task.endDate
+                    date = task.endDate,
+                    color = Color(task.color)
                 )
         }
     }
@@ -217,7 +254,7 @@ private fun ProjectAndTasks(
 
 
 @Composable
-private fun HeaderRow(
+private fun Tabs(
     modifier: Modifier,
     tabs: List<String>,
     selected: Int,

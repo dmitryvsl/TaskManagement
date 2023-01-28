@@ -41,9 +41,6 @@ fun CurrentProject(
             // Here 3 - 2 for shapes and 1 for extra top padding
             .height(150.dp + initialOffset * 3)
     ) {
-        val completedTasksCount =
-            remember { project.tasks.filter { task -> task.done }.size }
-
         Box(
             modifier = Modifier
                 .padding(top = initialOffset * 3)
@@ -54,11 +51,7 @@ fun CurrentProject(
 
             ProjectCard(
                 modifier = modifier,
-                title = project.title,
-                startDate = project.startDate,
-                endDate = project.endDate,
-                completedTasks = completedTasksCount,
-                totalTasks = project.tasks.size
+                project = project
             )
         }
     }

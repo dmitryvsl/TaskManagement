@@ -9,8 +9,7 @@ android {
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:network"))
+    implementation(project(":core:cache"))
     implementation(libs.rxjava)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
 }

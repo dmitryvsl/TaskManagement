@@ -6,11 +6,11 @@ class NoInternetException : Throwable()
 
 class UserAuthException : Throwable()
 
-class InvalidEmailOrPasswordException : Throwable()
+class IncorrectDataException : Throwable()
 
 class UserNotExist : Throwable()
 
 /**
  * Throws when response from server is empty
  */
-class InformationNotFound() : Throwable()
+class InformationNotFound : Throwable()
