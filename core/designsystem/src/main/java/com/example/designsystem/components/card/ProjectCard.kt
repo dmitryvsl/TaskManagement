@@ -135,7 +135,7 @@ private fun ProjectTitleAndMembers(
                             .size(MaterialTheme.dimens.minimumTouchTarget / 1.5f)
                             .clip(CircleShape),
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(user.avatar)
+                            .data(user.photo)
                             .crossfade(true)
                             .build(),
                         contentScale = ContentScale.Crop,

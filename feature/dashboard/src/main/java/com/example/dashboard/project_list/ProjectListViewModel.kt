@@ -1,98 +1,65 @@
 package com.example.dashboard.project_list
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.example.common.BaseViewModel
+import com.example.common.DataState
+import com.example.domain.model.Page
 import com.example.domain.model.Project
 import com.example.domain.repository.ProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProjectListViewModel @Inject constructor(
     private val repository: ProjectRepository
 ) : BaseViewModel<List<Project>>() {
-    override val error: MutableLiveData<Throwable> = MutableLiveData()
-    override val data: MutableLiveData<List<Project>> = MutableLiveData()
-    override val loading: MutableLiveData<Boolean> = MutableLiveData()
-    override var disposable: Disposable? = null
 
-    private var _currentTab: MutableLiveData<Tab> = MutableLiveData(Tab.INITIAL)
-    val currentTab: LiveData<Tab> = _currentTab
+    override val data: MutableLiveData<DataState<List<Project>>> =
+        MutableLiveData(DataState.Initial())
 
-    private var allProjects: MutableList<Project>? = null
-    private var completedProjects: List<Project>? = null
-    private var bookmarkedProjects: List<Project>? = null
-
-    private var needFetchBookmarks = false
-
-    override fun setLoadingValue(value: Boolean) {
-        loading.value = value
-    }
-
-    override fun setErrorValue(value: Throwable?) {
-        error.value = value
-    }
-
-    override fun setData(value: List<Project>?) {
-        if (allProjects == null && value != null) allProjects = value.toMutableList()
-
-        if (completedProjects == null && value != null) {
-            completedProjects = value.filter { project ->
-                val tasks = project.tasks
-                val completedTaskCount = tasks.filter { task -> task.done }.size
-
-                project.tasks.size == completedTaskCount
-            }
-        }
-
-        if (needFetchBookmarks) {
-            needFetchBookmarks = false
-            fetchBookmarks()
-            return
-        }
-
+    override fun setData(value: DataState<List<Project>>) {
+        if (value is DataState.Success) allProjectsPage.setIsLastPage(value.data.size)
         data.value = value
     }
 
+    private val allProjectsPage = Page()
+    private val completedProjectsPage = Page()
+    private val bookmarkedProjectsPage = Page()
+
+    private val _completedProjects: MutableLiveData<DataState<List<Project>>> =
+        MutableLiveData(DataState.Initial())
+    val completedProjects: LiveData<DataState<List<Project>>> = _completedProjects
+
+    private val _bookmarkedProjects: MutableLiveData<DataState<List<Project>>> =
+        MutableLiveData(DataState.Initial())
+    val bookmarkedProjects: LiveData<DataState<List<Project>>> = _bookmarkedProjects
+
+
     init {
         fetchProjects()
+        fetchCompleted()
+        fetchBookmarks()
     }
 
     fun fetchProjects() {
-        makeSingleCall(repository.fetchProjects("Capi creative"))
+        val disposable = makeSingleCall(call = repository.fetchProjects(allProjectsPage),
+            onSuccess = { value -> setData(DataState.Success(value)) },
+            onError = { e -> setData(DataState.Error(e)) })
+        compositeDisposable.add(disposable)
     }
 
-    fun onPageChange(page: Tab) {
-        _currentTab.value = page
-        if (!allProjects.isNullOrEmpty() && disposable != null) cancelLoading()
-
-        when (page) {
-            Tab.INITIAL -> data.value = allProjects
-            Tab.COMPLETED -> data.value = completedProjects
-            Tab.FLAG -> fetchBookmarks()
-        }
+    fun fetchBookmarks() {
+        val disposable = makeSingleCall(call = repository.fetchBookmarks(bookmarkedProjectsPage),
+            onSuccess = { value -> _bookmarkedProjects.value = DataState.Success(value) },
+            onError = { e -> _bookmarkedProjects.value = DataState.Error(e) })
+        compositeDisposable.add(disposable)
     }
 
-    private fun fetchBookmarks() {
-        if (allProjects == null) {
-            needFetchBookmarks = true
-            return
-        }
-
-        setData(null)
-        makeSingleCall(
-            call = repository.fetchProjectBookmarks(workspace = "Capi creative"),
-            onSuccess = { projectIds ->
-                bookmarkedProjects = allProjects!!.filter { project -> project.title in projectIds }
-                setData(bookmarkedProjects)
-            },
-            onError = { e -> setErrorValue(e) }
-        )
+    fun fetchCompleted() {
+        val disposable = makeSingleCall(call = repository.fetchCompleted(completedProjectsPage),
+            onSuccess = { value -> _completedProjects.value = DataState.Success(value) },
+            onError = { e -> _completedProjects.value = DataState.Error(e) })
+        compositeDisposable.add(disposable)
     }
 }

@@ -1,9 +1,9 @@
 package com.example.dashboard.project_list
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +23,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,13 +30,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.common.DataState
 import com.example.dashboard.home.components.Search
 import com.example.dashboard.home.components.SearchState
 import com.example.designsystem.components.card.ProjectCard
@@ -53,16 +53,16 @@ import com.example.feature.dashboard.R
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProjectListRoute(
     viewModel: ProjectListViewModel = hiltViewModel(), onBackClick: () -> Unit
 ) {
-    val projects by viewModel.data.observeAsState()
-    val loading by viewModel.loading.observeAsState(false)
-    val error by viewModel.error.observeAsState()
-    val selectedTab by viewModel.currentTab.observeAsState(Tab.INITIAL)
+    val allProjectsState by viewModel.data.observeAsState(DataState.Initial())
+    val completedProjectsState by viewModel.completedProjects.observeAsState(DataState.Initial())
+    val bookmarkedProjectsState by viewModel.bookmarkedProjects.observeAsState(DataState.Initial())
 
     Column(
         modifier = Modifier
@@ -86,68 +86,93 @@ fun ProjectListRoute(
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
 
+        val (selected, setSelected) = remember { mutableStateOf(0) }
 
         val tabs = listOf(
             stringResource(R.string.projects),
             stringResource(R.string.completed),
             stringResource(R.string.flag)
         )
+        val pagerState = rememberPagerState(initialPage = selected)
+        val coroutineScope = rememberCoroutineScope()
         TmTabLayout(modifier = modifier
             .fillMaxWidth()
             .padding(vertical = MaterialTheme.dimens.paddingExtraSmall)
             .align(Alignment.CenterHorizontally),
-            selectedItemIndex = selectedTab.ordinal,
+            selectedItemIndex = selected,
             items = tabs,
-            onClick = { page -> viewModel.onPageChange(Tab.values()[page]) })
+            onClick = { page ->
+                coroutineScope.launch { pagerState.animateScrollToPage(page) }
+            }
+        )
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingSmall))
 
-        val pagerState = rememberPagerState(initialPage = 0)
         LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.currentPage }.collect { page -> viewModel.onPageChange(Tab.values()[page]) }
+            snapshotFlow { pagerState.currentPage }.collect { page -> setSelected(page) }
         }
         HorizontalPager(
-            count = tabs.size, state = pagerState
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.Top,
+            count = tabs.size,
+            state = pagerState
         ) { page ->
-            ProjectListScreen(modifier = modifier,
-                loading = loading,
-                projects = projects,
-                error = error,
-                onRetryLoading = { viewModel.fetchProjects() })
+            when (page) {
+                0 -> ProjectListScreen(
+                    modifier = modifier,
+                    state = allProjectsState,
+                    onRetryLoading = { viewModel.fetchProjects() })
+
+                1 -> ProjectListScreen(
+                    modifier = modifier,
+                    state = completedProjectsState,
+                    onRetryLoading = { viewModel.fetchCompleted() },
+                    messageForInformationNotFound = stringResource(R.string.noOneProjectCompleted)
+                )
+
+                2 -> ProjectListScreen(
+                    modifier = modifier,
+                    state = bookmarkedProjectsState,
+                    onRetryLoading = { viewModel.fetchBookmarks() },
+                    messageForInformationNotFound = stringResource(R.string.bookmarkProjectToSee)
+                )
+            }
         }
     }
 }
 
 @Composable
 fun ProjectListScreen(
-    loading: Boolean,
-    projects: List<Project>?,
-    error: Throwable?,
+    state: DataState<List<Project>>,
     onRetryLoading: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    messageForInformationNotFound: String = stringResource(R.string.noOneProjectCreated)
 ) {
-    if (loading) Loading(modifier = Modifier.fillMaxSize())
+    when (state) {
+        is DataState.Initial -> {}
+        is DataState.Loading -> Loading(modifier = Modifier.fillMaxSize())
+        is DataState.Error -> Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            when (state.t) {
+                is NoInternetException -> ErrorMessageWithAction(
+                    message = stringResource(R.string.noInternet),
+                    actionMessage = stringResource(R.string.tryAgain),
+                    onActionClick = onRetryLoading
+                )
 
-    error?.let { error ->
-        when (error) {
-            is NoInternetException -> ErrorMessageWithAction(
-                message = stringResource(R.string.noInternet),
-                actionMessage = stringResource(R.string.tryAgain),
-                onActionClick = onRetryLoading
-            )
-
-            is InformationNotFound -> InformationMessage(stringResource(R.string.noOneProjectCreated))
-            else -> ErrorMessageWithAction(
-                message = stringResource(R.string.errorOccurred),
-                actionMessage = stringResource(R.string.tryAgain),
-                onActionClick = onRetryLoading
-            )
+                is InformationNotFound -> InformationMessage(messageForInformationNotFound)
+                else -> ErrorMessageWithAction(
+                    message = stringResource(R.string.errorOccurred),
+                    actionMessage = stringResource(R.string.tryAgain),
+                    onActionClick = onRetryLoading
+                )
+            }
         }
-    }
 
-    projects?.let { projectList ->
-        LazyColumn {
-            items(items = projectList, key = { project -> project.title }) { project ->
+        is DataState.Success -> LazyColumn {
+            items(items = state.data, key = { project -> project.title }) { project ->
                 ProjectCard(
                     project = project,
                     modifier = modifier.padding(vertical = MaterialTheme.dimens.paddingMedium)

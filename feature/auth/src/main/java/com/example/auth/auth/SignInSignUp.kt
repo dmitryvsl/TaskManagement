@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.common.BaseViewModel
+import com.example.common.DataState
 import com.example.designsystem.components.Overlay
 import com.example.designsystem.components.textfield.TextFieldError
 import com.example.designsystem.components.textfield.TmOutlinedTextField
@@ -206,28 +207,27 @@ internal fun LoadingOverlay(
  * Occupy all screen with transparent overlay and show message
  */
 @Composable
-internal fun InformationOverlay(
+internal fun InformationDialog(
     message: String,
     onCloseClick: () -> Unit
 ) {
-    Overlay {
-        Surface(
-            shape = MaterialTheme.shapes.large,
-            elevation = 4.dp,
-            color = MaterialTheme.colors.background
-        ) {
-            Column(
-                modifier = Modifier.padding(MaterialTheme.dimens.paddingDefault),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.onBackground,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
+    AlertDialog(
+        text = {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.onBackground,
+                textAlign = TextAlign.Center
+            )
+        },
+        shape = MaterialTheme.shapes.medium,
+        backgroundColor = MaterialTheme.colors.background,
+        onDismissRequest = onCloseClick,
+        buttons = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ){
                 Button(onClick = { onCloseClick() }) {
                     Text(
                         text = stringResource(id = R.string.close),
@@ -236,7 +236,7 @@ internal fun InformationOverlay(
                 }
             }
         }
-    }
+    )
 }
 
 
@@ -254,30 +254,25 @@ fun CallStateRepresenter(
     userNotExistMessage: String = stringResource(R.string.enteredEmailDoesntExist),
     undefinedExceptionMessage: String = stringResource(R.string.someErrorOccured)
 ) {
-    val loading by viewModel.loading.observeAsState(false)
-    val error by viewModel.error.observeAsState()
-    val isCallSuccess by viewModel.data.observeAsState(false)
+    val state: DataState<Boolean> by viewModel.data.observeAsState(DataState.Initial())
 
     val onError: @Composable (message: String) -> Unit = { message ->
-        InformationOverlay(message = message) { viewModel.clearError() }
+        InformationDialog(message = message) { viewModel.clearState() }
     }
 
-    LaunchedEffect(isCallSuccess) {
-        if (isCallSuccess) onCallSuccess()
-    }
-
-    error?.let { e ->
-        when (e) {
+    when (state){
+        is DataState.Error -> when ((state as DataState.Error<Boolean>).t) {
             is NoInternetException -> onError(noInternetExceptionMessage)
-            is InvalidEmailOrPasswordException -> onError(invalidEmailOrPasswordExceptionMessage)
+            is IncorrectDataException -> onError(invalidEmailOrPasswordExceptionMessage)
             is UserAuthException -> onError(userAuthExceptionMessage)
             is UserAlreadyExist -> onError(userAlreadyExistMessage)
             is UserNotExist -> onError(userNotExistMessage)
             else -> onError(undefinedExceptionMessage)
         }
-    }
-
-    if (loading) LoadingOverlay {
-        viewModel.setLoadingValue(false)
+        is DataState.Loading -> LoadingOverlay {
+            viewModel.clearState()
+        }
+        is DataState.Success -> onCallSuccess()
+        is DataState.Initial -> {}
     }
 }

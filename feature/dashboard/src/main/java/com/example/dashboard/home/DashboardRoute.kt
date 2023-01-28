@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.common.DataState
 import com.example.dashboard.home.components.CurrentProject
 import com.example.dashboard.home.components.SearchRow
 import com.example.dashboard.home.components.SearchState
@@ -68,8 +69,7 @@ fun DashboardRoute(
 ) {
     val focusManager = LocalFocusManager.current
     val project by viewModel.data.observeAsState()
-    val loading by viewModel.loading.observeAsState()
-    val error by viewModel.error.observeAsState()
+    val state by viewModel.data.observeAsState(DataState.Initial())
 
     val contentModifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
 
@@ -137,9 +137,7 @@ fun DashboardRoute(
                         0 -> CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
                             DashboardHomeScreen(
                                 modifier = contentModifier,
-                                loading = loading,
-                                project = project,
-                                error = error,
+                                state = state,
                                 onRetryLoading = { viewModel.fetchProject() },
                                 navigateToProjectsList = navigateToProjectsList
                             )
@@ -157,18 +155,15 @@ fun DashboardRoute(
 
 @Composable
 fun DashboardHomeScreen(
-    loading: Boolean?,
-    error: Throwable?,
-    project: Project?,
+    state: DataState<Project>,
     onRetryLoading: () -> Unit,
     navigateToProjectsList: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
-    if (loading != null && loading) Loading(Modifier.fillMaxSize())
-
-    error?.let { error ->
-        when (error) {
+    when (state) {
+        is DataState.Initial -> {}
+        is DataState.Error -> when (state.t) {
             is NoInternetException ->
                 ErrorMessageWithAction(
                     message = stringResource(R.string.noInternet),
@@ -185,14 +180,14 @@ fun DashboardHomeScreen(
                     onActionClick = onRetryLoading
                 )
         }
-    }
 
-    project?.let { project ->
-        ProjectAndTasks(
-            project,
+        is DataState.Success -> ProjectAndTasks(
+            state.data,
             modifier = modifier,
             navigateToProjectsList = navigateToProjectsList
         )
+
+        is DataState.Loading -> Loading(Modifier.fillMaxSize())
     }
 }
 
@@ -232,7 +227,10 @@ private fun ProjectAndTasks(
         }
 
         item {
-            if (project.tasks.isEmpty()) InformationMessage(text = stringResource( R.string.noOneTaskCreated), modifier = Modifier.fillMaxWidth())
+            if (project.tasks.isEmpty()) InformationMessage(
+                text = stringResource(R.string.noOneTaskCreated),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         items(

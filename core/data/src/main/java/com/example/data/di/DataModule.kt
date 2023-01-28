@@ -1,43 +1,39 @@
 package com.example.data.di
 
+import com.example.cache.datasource.LocalUserDataSource
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.ProjectRepositoryImpl
 import com.example.domain.repository.*
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import dagger.Binds
+import com.example.network.datasource.RemoteProjectDataSource
+import com.example.network.datasource.RemoteUserDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface DataModule {
+class DataModule {
 
-    @Binds
-    fun bindAuthRepository(authRepository: AuthRepositoryImpl): AuthRepository
+    @Provides
+    fun provideAuthRepository(
+        dataSource: RemoteUserDataSource, localUserDataSource: LocalUserDataSource
+    ): AuthRepository = AuthRepositoryImpl(dataSource, localUserDataSource)
 
-    @Binds
-    fun bindMutableAuthRepository(authRepository: AuthRepositoryImpl): MutableAuthRepository
+    @Provides
+    fun provideMutableAuthRepository(
+        dataSource: RemoteUserDataSource, localUserDataSource: LocalUserDataSource
+    ): MutableAuthRepository = AuthRepositoryImpl(dataSource, localUserDataSource)
 
-    @Binds
-    fun bindUserSignInCheckRepository(authRepository: AuthRepositoryImpl): UserSignInCheckRepository
+    @Provides
+    fun provideUserSignInCheckRepository(
+        dataSource: RemoteUserDataSource, localUserDataSource: LocalUserDataSource
+    ): UserSignInCheckRepository = AuthRepositoryImpl(dataSource, localUserDataSource)
 
-    @Binds
-    fun bindProjectRepository(projectRepository: ProjectRepositoryImpl): ProjectRepository
-
-    companion object {
-        @Provides
-        @Singleton
-        fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-
-        @Provides
-        @Singleton
-        fun provideFirebaseDatabase(): FirebaseFirestore =
-            FirebaseFirestore.getInstance()
-    }
+    @Provides
+    fun provideProjectRepository(
+        remoteDataSource: RemoteProjectDataSource, localUserDataSource: LocalUserDataSource
+    ): ProjectRepository = ProjectRepositoryImpl(remoteDataSource, localUserDataSource)
 
 }

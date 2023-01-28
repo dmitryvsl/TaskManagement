@@ -79,7 +79,7 @@ fun NavGraphBuilder.dashboardGraph(
             }
         ) {
             ProjectListRoute {
-
+                navController.navigateUp()
             }
         }
     }

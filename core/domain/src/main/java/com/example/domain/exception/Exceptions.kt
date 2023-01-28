@@ -6,7 +6,7 @@ class NoInternetException : Throwable()
 
 class UserAuthException : Throwable()
 
-class InvalidEmailOrPasswordException : Throwable()
+class IncorrectDataException : Throwable()
 
 class UserNotExist : Throwable()
 

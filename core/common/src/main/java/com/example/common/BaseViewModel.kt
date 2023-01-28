@@ -5,67 +5,30 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 
 
 abstract class BaseViewModel<T : Any> : ViewModel() {
 
-    abstract val error: LiveData<Throwable>
 
-    abstract val data: LiveData<T>
-
-    abstract val loading: LiveData<Boolean>
-
-    abstract var disposable: Disposable?
-
-    abstract fun setLoadingValue(value: Boolean)
-    protected abstract fun setErrorValue(value: Throwable?)
-    protected abstract fun setData(value: T?)
+    abstract val data: LiveData<DataState<T>>
+    protected var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    protected abstract fun setData(value: DataState<T>)
 
     fun makeSingleCall(
         call: Single<T>,
-    ) {
-        setErrorValue(null)
-        setLoadingValue(value = true)
-        disposable = call
+        onSuccess: (T) -> Unit,
+        onError: (Throwable) -> Unit
+    ): Disposable {
+        setData(DataState.Loading())
+        return call
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnEvent { _, _ ->
-                setLoadingValue(value = false)
-                disposable = null
-            }
             .subscribeWith(object : DisposableSingleObserver<T>() {
                 override fun onSuccess(value: T) {
-                    setData(value)
-                }
-
-                override fun onError(e: Throwable) {
-                    Log.e("lalala", "onError: $e", )
-                    setErrorValue(e)
-                }
-            })
-
-    }
-
-    fun<S : Any> makeSingleCall(
-        call: Single<S>,
-        onSuccess: (S) -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-        setErrorValue(null)
-        setLoadingValue(value = true)
-        disposable = call
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnEvent { _, _ ->
-                setLoadingValue(value = false)
-                disposable = null
-            }
-            .subscribeWith(object : DisposableSingleObserver<S>() {
-                override fun onSuccess(value: S) {
                     onSuccess(value)
                 }
 
@@ -73,22 +36,28 @@ abstract class BaseViewModel<T : Any> : ViewModel() {
                     onError(e)
                 }
             })
-
-    }
-
-
-    fun clearError() {
-        setErrorValue(null)
     }
 
     fun cancelLoading() {
-        disposable?.dispose()
-        disposable = null
-        setLoadingValue(false)
+        compositeDisposable.dispose()
+        clearState()
+    }
+
+    fun clearState(){
+        setData(DataState.Initial())
     }
 
     override fun onCleared() {
-        disposable?.dispose()
+        cancelLoading()
         super.onCleared()
     }
+}
+
+
+sealed class DataState<T> {
+
+    class Initial<T> : DataState<T>()
+    class Success<T>(val data: T) : DataState<T>()
+    class Error<T>(val t: Throwable) : DataState<T>()
+    class Loading<T> : DataState<T>()
 }

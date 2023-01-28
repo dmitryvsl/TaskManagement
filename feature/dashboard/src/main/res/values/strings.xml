@@ -14,4 +14,6 @@
     <string name="completed">Completed</string>
     <string name="flag">Flag</string>
     <string name="errorOccurred">Some error occurred. Please, try again</string>
+    <string name="noOneProjectCompleted">No one project completed yet</string>
+    <string name="bookmarkProjectToSee">Add project to bookmark</string>
 </resources>
