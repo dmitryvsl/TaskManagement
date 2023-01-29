@@ -16,4 +16,6 @@
     <string name="noOneProjectCompleted">No one project completed yet</string>
     <string name="bookmarkProjectToSee">Add project to bookmark</string>
     <string name="flag">Flag</string>
+    <string name="noWorkspace">You\'re not in any workspace.\n Create your own workspace in settings or ask someone to invite you.\n</string>
+    <string name="createWorkspace">Create workspace</string>
 </resources>

@@ -6,13 +6,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import com.example.auth.navigation.authGraph
-import com.example.auth.navigation.signInRoute
-import com.example.auth.navigation.signUpRoute
 import com.example.chat.navigation.chatGraph
 import com.example.dashboard.navigation.dashboardGraph
 import com.example.dashboard.navigation.dashboardHomeRoute
 import com.example.dashboard.navigation.navigateToDashboard
 import com.example.notification.navigation.notification
+import com.example.settings.navigation.navigateToSettings
 import com.example.settings.navigation.settingsGraph
 import com.example.settings.navigation.settingsRoute
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -47,8 +46,9 @@ fun TmNavHost(
         )
         dashboardGraph(
             navController = navController,
-            signInRoute = signInRoute,
-            signUpRoute = signUpRoute,
+            navigateToSettings = {
+                navController.navigateToSettings()
+            }
         )
         chatGraph(dashboardRoute = dashboardHomeRoute)
         notification(settingsRoute = settingsRoute)

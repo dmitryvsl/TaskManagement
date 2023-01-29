@@ -9,6 +9,7 @@ enum class HttpStatusCode(val code: Int) {
     // 4.x.x
     BadRequest(400),
     Forbidden(403),
+    NotAcceptable(406),
     Conflict(409)
 
 }

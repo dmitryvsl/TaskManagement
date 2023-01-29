@@ -1,6 +1,5 @@
 package com.example.dashboard.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -12,7 +11,6 @@ import com.example.dashboard.project_list.ProjectListRoute
 import com.example.designsystem.utils.animationDuration
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
-import kotlin.math.roundToInt
 
 const val dashboardGraph = "dashboard_graph"
 
@@ -31,53 +29,48 @@ private fun NavController.navigateToProjectsList(navOptions: NavOptions? = null)
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.dashboardGraph(
     navController: NavController,
-    signInRoute: String,
-    signUpRoute: String,
+    navigateToSettings: () -> Unit,
 ) {
     navigation(
         route = dashboardGraph,
         startDestination = dashboardHomeRoute,
     ) {
         composable(
-            dashboardHomeRoute,
+            route = dashboardHomeRoute,
             enterTransition = {
                 if (initialState.destination.route == projectsList) return@composable null
+                if (initialState.destination.route == dashboardHomeRoute) return@composable null
                 slideIntoContainer(
-                    AnimatedContentScope.SlideDirection.Right,
-                    tween(animationDuration)
-                )
-            },
-            exitTransition = {
-                if (targetState.destination.route != projectsList)
-                    slideOutOfContainer(
-                        AnimatedContentScope.SlideDirection.Left, tween(animationDuration)
-                    )
-                else null
-            }
-        ) {
-            DashboardRoute(navigateToProjectsList = {
-                navController.navigateToProjectsList(
-                    NavOptions.Builder().setLaunchSingleTop(true).build()
-                )
-            })
-        }
-
-        composable(
-            route = projectsList,
-            enterTransition = {
-                val animationDuration = animationDuration / 2
-                slideIntoContainer(
-                    AnimatedContentScope.SlideDirection.Left,
-                    tween(animationDuration)
-                )
-            },
-            exitTransition = {
-                val animationDuration = animationDuration / 2
-                slideOutOfContainer(
                     AnimatedContentScope.SlideDirection.Right, tween(animationDuration)
                 )
-            }
-        ) {
+            },
+            exitTransition = {
+                if (targetState.destination.route != projectsList) slideOutOfContainer(
+                    AnimatedContentScope.SlideDirection.Left, tween(animationDuration)
+                )
+                else null
+            }) {
+            DashboardRoute(
+                navigateToProjectsList = {
+                    navController.navigateToProjectsList(
+                        NavOptions.Builder().setLaunchSingleTop(true).build()
+                    )
+                },
+                navigateToSettings = navigateToSettings
+            )
+        }
+
+        composable(route = projectsList, enterTransition = {
+            val animationDuration = animationDuration / 2
+            slideIntoContainer(
+                AnimatedContentScope.SlideDirection.Left, tween(animationDuration)
+            )
+        }, exitTransition = {
+            val animationDuration = animationDuration / 2
+            slideOutOfContainer(
+                AnimatedContentScope.SlideDirection.Right, tween(animationDuration)
+            )
+        }) {
             ProjectListRoute {
                 navController.navigateUp()
             }
