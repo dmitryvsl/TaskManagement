@@ -1,5 +1,6 @@
 package com.example.dashboard.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -41,13 +42,8 @@ fun NavGraphBuilder.dashboardGraph(
             dashboardHomeRoute,
             enterTransition = {
                 if (initialState.destination.route == projectsList) return@composable null
-
                 slideIntoContainer(
-                    when (initialState.destination.route){
-                        signInRoute -> AnimatedContentScope.SlideDirection.Up
-                        signUpRoute -> AnimatedContentScope.SlideDirection.Up
-                        else -> AnimatedContentScope.SlideDirection.Right
-                    },
+                    AnimatedContentScope.SlideDirection.Right,
                     tween(animationDuration)
                 )
             },
@@ -59,7 +55,11 @@ fun NavGraphBuilder.dashboardGraph(
                 else null
             }
         ) {
-            DashboardRoute(navigateToProjectsList = { navController.navigateToProjectsList(NavOptions.Builder().setLaunchSingleTop(true).build()) })
+            DashboardRoute(navigateToProjectsList = {
+                navController.navigateToProjectsList(
+                    NavOptions.Builder().setLaunchSingleTop(true).build()
+                )
+            })
         }
 
         composable(
@@ -71,7 +71,7 @@ fun NavGraphBuilder.dashboardGraph(
                     tween(animationDuration)
                 )
             },
-            popExitTransition = {
+            exitTransition = {
                 val animationDuration = animationDuration / 2
                 slideOutOfContainer(
                     AnimatedContentScope.SlideDirection.Right, tween(animationDuration)

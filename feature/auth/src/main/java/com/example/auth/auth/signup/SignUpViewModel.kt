@@ -1,12 +1,10 @@
 package com.example.auth.auth.signup
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.common.BaseViewModel
 import com.example.common.DataState
 import com.example.domain.repository.MutableAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 
@@ -28,6 +26,6 @@ class SignUpViewModel @Inject constructor(
     override val data: MutableLiveData<DataState<Boolean>> = MutableLiveData()
 
     override fun setData(value: DataState<Boolean>) {
-        TODO("Not yet implemented")
+        data.value = value
     }
 }

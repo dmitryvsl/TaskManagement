@@ -4,9 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -56,19 +58,15 @@ fun SignInRoute(
     ) {
 
         Spacer(modifier = Modifier.statusBarsPadding())
-        IconButton(
-            modifier = Modifier
-                .size(MaterialTheme.dimens.minimumTouchTarget)
-                .padding(MaterialTheme.dimens.paddingSmall)
-                .align(Alignment.Start),
-            onClick = onBackClick,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_back),
-                contentDescription = "Back",
-                tint = MaterialTheme.colors.onBackground
-            )
-        }
+        Icon(modifier = Modifier
+            .size(MaterialTheme.dimens.minimumTouchTarget)
+            .clip(CircleShape)
+            .clickable { onBackClick() }
+            .padding(MaterialTheme.dimens.paddingSmall)
+            .align(Alignment.Start),
+            imageVector = Icons.Rounded.KeyboardArrowLeft,
+            contentDescription = null,
+            tint = MaterialTheme.colors.onBackground)
 
         Spacer(modifier = Modifier.weight(1f))
 

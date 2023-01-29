@@ -2,6 +2,7 @@ package com.example.network.datasource
 
 import android.util.Log
 import com.example.domain.exception.InformationNotFound
+import com.example.network.model.BookmarkModel
 import com.example.network.model.FetchProjectType
 import com.example.network.model.NetworkProject
 import com.example.network.model.RemoteProjectModel
@@ -48,6 +49,14 @@ class RemoteProjectDataSourceImpl @Inject constructor(
                 emitter.onError(exceptionHandler.handle(t))
             }
         })
+    }
+
+    override fun addBookmark(token: String, projectId: Int) {
+        apiService.addBookmark(BookmarkModel(token, projectId)).execute()
+    }
+
+    override fun deleteBookmark(token: String, projectId: Int) {
+        apiService.deleteBookmark(BookmarkModel(token, projectId)).execute()
     }
 
 }

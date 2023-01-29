@@ -15,25 +15,29 @@ class ProjectRepositoryImpl @Inject constructor(
     private val localDataSource: LocalUserDataSource
 ) : ProjectRepository {
 
-    override fun fetchProjects(page: Page): Single<List<Project>> {
-        val token = localDataSource.getToken()
-        return remoteDataSource.fetchProjects(
-            token, page.page, page.limit, type = FetchProjectType.ALL
-        ).map { single -> single.map { project -> project.asDomain() } }
+    override fun fetchProjects(page: Page): Single<List<Project>> =
+        remoteDataSource.fetchProjects(token(), page.page, page.limit, type = FetchProjectType.ALL)
+            .map { single -> single.map { project -> project.asDomain() } }
+
+
+    override fun fetchBookmarks(page: Page): Single<List<Project>> =
+        remoteDataSource.fetchProjects(token(), page.page, page.limit, type = FetchProjectType.BOOKMARK)
+            .map { single -> single.map { project -> project.asDomain() } }
+
+
+    override fun fetchCompleted(page: Page): Single<List<Project>> =
+        remoteDataSource.fetchProjects(token(), page.page, page.limit, type = FetchProjectType.COMPLETED)
+            .map { single -> single.map { project -> project.asDomain() } }
+
+
+    override fun addBookmark(projectId: Int) {
+        remoteDataSource.addBookmark(token(), projectId)
     }
 
-    override fun fetchBookmarks(page: Page): Single<List<Project>> {
-        val token = localDataSource.getToken()
-        return remoteDataSource.fetchProjects(
-            token, page.page, page.limit, type = FetchProjectType.COMPLETED
-        ).map { single -> single.map { project -> project.asDomain() } }
+    override fun deleteBookmark(projectId: Int) {
+        remoteDataSource.deleteBookmark(token(), projectId)
     }
 
-    override fun fetchCompleted(page: Page): Single<List<Project>> {
-        val token = localDataSource.getToken()
-        return remoteDataSource.fetchProjects(
-            token, page.page, page.limit, type = FetchProjectType.BOOKMARK
-        ).map { single -> single.map { project -> project.asDomain() } }
-    }
+    private fun token() = localDataSource.getToken()
 
 }

@@ -1,7 +1,9 @@
 package com.example.dashboard.project_list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -31,20 +34,25 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.common.DataState
 import com.example.dashboard.home.components.Search
 import com.example.dashboard.home.components.SearchState
+import com.example.designsystem.components.BookmarkOverlay
+import com.example.designsystem.components.Overlay
 import com.example.designsystem.components.card.ProjectCard
 import com.example.designsystem.components.information.ErrorMessageWithAction
 import com.example.designsystem.components.information.InformationMessage
 import com.example.designsystem.components.information.Loading
 import com.example.designsystem.components.tab.TmTabLayout
+import com.example.designsystem.theme.White
 import com.example.designsystem.theme.dimens
 import com.example.domain.exception.InformationNotFound
 import com.example.domain.exception.NoInternetException
@@ -80,9 +88,7 @@ fun ProjectListRoute(
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
 
         val searchState = remember { SearchState() }
-        Search(
-            modifier = modifier, searchState = searchState
-        )
+        Search(modifier = modifier, searchState = searchState)
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
 
@@ -121,20 +127,24 @@ fun ProjectListRoute(
                 0 -> ProjectListScreen(
                     modifier = modifier,
                     state = allProjectsState,
-                    onRetryLoading = { viewModel.fetchProjects() })
+                    onRetryLoading = { viewModel.fetchProjects() },
+                    onBookmarkClick = { project -> viewModel.onBookmarkClick(project) }
+                )
 
                 1 -> ProjectListScreen(
                     modifier = modifier,
                     state = completedProjectsState,
                     onRetryLoading = { viewModel.fetchCompleted() },
-                    messageForInformationNotFound = stringResource(R.string.noOneProjectCompleted)
+                    messageForInformationNotFound = stringResource(R.string.noOneProjectCompleted),
+                    onBookmarkClick = { project -> viewModel.onBookmarkClick(project) }
                 )
 
                 2 -> ProjectListScreen(
                     modifier = modifier,
                     state = bookmarkedProjectsState,
                     onRetryLoading = { viewModel.fetchBookmarks() },
-                    messageForInformationNotFound = stringResource(R.string.bookmarkProjectToSee)
+                    messageForInformationNotFound = stringResource(R.string.bookmarkProjectToSee),
+                    onBookmarkClick = { project -> viewModel.onBookmarkClick(project) }
                 )
             }
         }
@@ -145,9 +155,11 @@ fun ProjectListRoute(
 fun ProjectListScreen(
     state: DataState<List<Project>>,
     onRetryLoading: () -> Unit,
+    onBookmarkClick: (Project) -> Unit,
     modifier: Modifier = Modifier,
     messageForInformationNotFound: String = stringResource(R.string.noOneProjectCreated)
 ) {
+    var showOverlay by remember { mutableStateOf(false) }
     when (state) {
         is DataState.Initial -> {}
         is DataState.Loading -> Loading(modifier = Modifier.fillMaxSize())
@@ -175,7 +187,18 @@ fun ProjectListScreen(
             items(items = state.data, key = { project -> project.title }) { project ->
                 ProjectCard(
                     project = project,
-                    modifier = modifier.padding(vertical = MaterialTheme.dimens.paddingMedium)
+                    modifier = modifier.padding(vertical = MaterialTheme.dimens.paddingMedium),
+                    onLongClick = { showOverlay = true },
+                    overlay = {
+                        if (showOverlay) BookmarkOverlay(
+                            isBookmarked = project.isBookmarked,
+                            onCloseClick = { showOverlay = false },
+                            onBookmarkClick = {
+                                showOverlay = false
+                                onBookmarkClick(project)
+                            }
+                        )
+                    }
                 )
             }
         }

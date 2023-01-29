@@ -1,26 +1,18 @@
 package com.example.taskmanagement.navigation
 
-import android.util.Log
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import com.example.auth.navigation.authGraph
-import com.example.auth.navigation.authNavigationRouteGraph
 import com.example.auth.navigation.signInRoute
 import com.example.auth.navigation.signUpRoute
 import com.example.chat.navigation.chatGraph
-import com.example.chat.navigation.chatListRoute
 import com.example.dashboard.navigation.dashboardGraph
 import com.example.dashboard.navigation.dashboardHomeRoute
 import com.example.dashboard.navigation.navigateToDashboard
 import com.example.notification.navigation.notification
-import com.example.notification.navigation.notificationRoute
 import com.example.settings.navigation.settingsGraph
 import com.example.settings.navigation.settingsRoute
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -29,7 +21,6 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 @Composable
 fun TmNavHost(
     navController: NavHostController,
-    onBackClick: () -> Unit,
     startDestination: String,
     authGraphStartDestination: String,
     onOnboardingPassed: () -> Unit,

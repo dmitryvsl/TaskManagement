@@ -1,5 +1,7 @@
 package com.example.network.remote
 
+import com.example.network.model.BookmarkModel
+import com.example.network.model.BookmarkResponse
 import com.example.network.model.NetworkProject
 import com.example.network.model.RemoteProjectModel
 import com.example.network.model.RemoteUserModel
@@ -29,6 +31,14 @@ interface ApiService {
     fun fetchCompletedProjects(@Body model: RemoteProjectModel): Call<List<NetworkProject>>
 
     @Headers("Accept: application/json")
-    @POST("/projects/bookmarked")
+    @POST("/projects/bookmarks")
     fun fetchBookmarkProjects(@Body model: RemoteProjectModel): Call<List<NetworkProject>>
+
+    @Headers("Accept: application/json")
+    @POST("/projects/bookmarks/add")
+    fun addBookmark(@Body model: BookmarkModel): Call<BookmarkResponse>
+
+    @Headers("Accept: application/json")
+    @POST("/projects/bookmarks/delete")
+    fun deleteBookmark(@Body model: BookmarkModel) : Call<BookmarkResponse>
 }

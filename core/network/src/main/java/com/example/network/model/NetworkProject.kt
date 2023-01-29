@@ -8,6 +8,7 @@ data class NetworkProject(
     val name: String,
     val startDate: String,
     val endDate: String,
+    val isBookmarked: Boolean,
     val tasks: List<NetworkTask>,
     val members: List<NetworkUser>
 )

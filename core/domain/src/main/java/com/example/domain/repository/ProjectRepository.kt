@@ -12,4 +12,7 @@ interface ProjectRepository {
     fun fetchBookmarks(page: Page): Single<List<Project>>
 
     fun fetchCompleted(page: Page): Single<List<Project>>
+
+    fun addBookmark(projectId: Int)
+    fun deleteBookmark(projectId: Int)
 }

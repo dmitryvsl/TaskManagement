@@ -68,9 +68,7 @@ fun DashboardRoute(
     navigateToProjectsList: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    val project by viewModel.data.observeAsState()
     val state by viewModel.data.observeAsState(DataState.Initial())
-
     val contentModifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
 
     BoxWithConstraints(Modifier.statusBarsPadding()) {
