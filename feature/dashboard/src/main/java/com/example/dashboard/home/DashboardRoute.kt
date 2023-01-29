@@ -1,6 +1,5 @@
 package com.example.dashboard.home
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
@@ -54,6 +53,7 @@ import com.example.designsystem.components.tab.TmTabLayout
 import com.example.designsystem.theme.dimens
 import com.example.domain.exception.InformationNotFound
 import com.example.domain.exception.NoInternetException
+import com.example.domain.exception.UserNotInWorkspace
 import com.example.domain.model.Project
 import com.example.feature.dashboard.R
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -65,12 +65,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardRoute(
     viewModel: DashboardHomeViewModel = hiltViewModel(),
-    navigateToProjectsList: () -> Unit
+    navigateToProjectsList: () -> Unit,
+    navigateToSettings: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val project by viewModel.data.observeAsState()
     val state by viewModel.data.observeAsState(DataState.Initial())
-
     val contentModifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
 
     BoxWithConstraints(Modifier.statusBarsPadding()) {
@@ -139,7 +138,8 @@ fun DashboardRoute(
                                 modifier = contentModifier,
                                 state = state,
                                 onRetryLoading = { viewModel.fetchProject() },
-                                navigateToProjectsList = navigateToProjectsList
+                                navigateToProjectsList = navigateToProjectsList,
+                                navigateToSettings = navigateToSettings
                             )
                         }
 
@@ -158,6 +158,7 @@ fun DashboardHomeScreen(
     state: DataState<Project>,
     onRetryLoading: () -> Unit,
     navigateToProjectsList: () -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -172,7 +173,12 @@ fun DashboardHomeScreen(
                 )
 
             is InformationNotFound -> InformationMessage(text = stringResource(R.string.noOneProjectCreated))
-
+            is UserNotInWorkspace -> ErrorMessageWithAction(
+                message = stringResource(R.string.noWorkspace),
+                actionMessage = stringResource(R.string.createWorkspace),
+                onActionClick = navigateToSettings,
+                modifier = modifier
+            )
             else ->
                 ErrorMessageWithAction(
                     message = stringResource(R.string.errorOccurred),

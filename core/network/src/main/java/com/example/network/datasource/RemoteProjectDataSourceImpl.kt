@@ -2,6 +2,8 @@ package com.example.network.datasource
 
 import android.util.Log
 import com.example.domain.exception.InformationNotFound
+import com.example.domain.exception.UserNotInWorkspace
+import com.example.network.model.BookmarkModel
 import com.example.network.model.FetchProjectType
 import com.example.network.model.NetworkProject
 import com.example.network.model.RemoteProjectModel
@@ -34,11 +36,15 @@ class RemoteProjectDataSourceImpl @Inject constructor(
             override fun onResponse(
                 call: Call<List<NetworkProject>>, response: Response<List<NetworkProject>>
             ) {
-                if (response.code() == HttpStatusCode.Ok.code) {
-                    if (response.body().isNullOrEmpty())
-                        emitter.onError(InformationNotFound())
-                    else emitter.onSuccess(response.body()!!)
+                when (response.code()){
+                    HttpStatusCode.Ok.code -> {
+                        if (response.body().isNullOrEmpty())
+                            emitter.onError(InformationNotFound())
+                        else emitter.onSuccess(response.body()!!)
+                    }
+                    HttpStatusCode.NotAcceptable.code -> emitter.onError(UserNotInWorkspace())
                 }
+
                 Log.e(TAG, "onResponse: ${response.code()} ${response.body()}")
                 emitter.onError(UnknownError())
             }
@@ -48,6 +54,14 @@ class RemoteProjectDataSourceImpl @Inject constructor(
                 emitter.onError(exceptionHandler.handle(t))
             }
         })
+    }
+
+    override fun addBookmark(token: String, projectId: Int) {
+        apiService.addBookmark(BookmarkModel(token, projectId)).execute()
+    }
+
+    override fun deleteBookmark(token: String, projectId: Int) {
+        apiService.deleteBookmark(BookmarkModel(token, projectId)).execute()
     }
 
 }

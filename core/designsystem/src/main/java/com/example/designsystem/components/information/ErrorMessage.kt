@@ -14,10 +14,11 @@ import com.example.designsystem.theme.dimens
 fun ErrorMessageWithAction(
     message: String,
     actionMessage: String,
-    onActionClick: () -> Unit
+    onActionClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

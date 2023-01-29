@@ -10,7 +10,6 @@ class IncorrectDataException : Throwable()
 
 class UserNotExist : Throwable()
 
-/**
- * Throws when response from server is empty
- */
 class InformationNotFound : Throwable()
+
+class UserNotInWorkspace() : Throwable()

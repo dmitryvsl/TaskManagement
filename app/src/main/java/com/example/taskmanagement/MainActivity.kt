@@ -3,35 +3,45 @@ package com.example.taskmanagement
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.example.auth.navigation.authNavigationRouteGraph
 import com.example.auth.navigation.onboardingRoute
 import com.example.auth.navigation.signUpRoute
 import com.example.dashboard.navigation.dashboardGraph
-import com.example.designsystem.components.Overlay
 import com.example.designsystem.extension.customShadow
 import com.example.designsystem.theme.Gray
 import com.example.designsystem.theme.TaskManagementTheme
 import com.example.designsystem.theme.dimens
-import com.example.designsystem.utils.animationDuration
 import com.example.domain.repository.UserSignInCheckRepository
 import com.example.taskmanagement.navigation.TmNavHost
 import com.example.taskmanagement.utils.SharedPreferencesUtils
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -76,7 +86,6 @@ class MainActivity : ComponentActivity() {
                             startDestination = startDestination,
                             authGraphStartDestination = authGraphStartDestination,
                             onOnboardingPassed = { sharedPreferencesUtils.markOnboardingPassed() },
-                            onBackClick = { appState.onBackClick() },
                             onAuthPassed = { isUserSignedIn = true }
                         )
                     }

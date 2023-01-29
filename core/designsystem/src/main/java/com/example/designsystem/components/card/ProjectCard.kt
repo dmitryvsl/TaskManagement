@@ -4,7 +4,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -64,10 +66,13 @@ import com.example.domain.model.Project
 import com.example.domain.model.User
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProjectCard(
     project: Project,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    overlay: @Composable () -> Unit = {},
+    onLongClick: () -> Unit = {}
 ) {
     Surface(
         modifier = modifier
@@ -81,21 +86,34 @@ fun ProjectCard(
             color = if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else MaterialTheme.colors.background
         )
     ) {
-        Column(
-            modifier = Modifier
+        Box(
+            Modifier
                 .fillMaxSize()
-                .padding(MaterialTheme.dimens.paddingExtraLarge),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            val completedTasksCount =
-                remember { project.tasks.filter { task -> task.done }.size }
-
-            ProjectTitleAndMembers(title = project.title, members = project.members)
-            ProjectCalendarLine(
-                startDate = project.startDate,
-                endDate = project.endDate
+                .combinedClickable(
+                onClick = {},
+                onLongClick = onLongClick
             )
-            ProjectProgress(completedTasks = completedTasksCount, totalTasks = project.tasks.size)
+        ) {
+            overlay()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(MaterialTheme.dimens.paddingExtraLarge),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                val completedTasksCount =
+                    remember { project.tasks.filter { task -> task.done }.size }
+
+                ProjectTitleAndMembers(title = project.title, members = project.members)
+                ProjectCalendarLine(
+                    startDate = project.startDate,
+                    endDate = project.endDate
+                )
+                ProjectProgress(
+                    completedTasks = completedTasksCount,
+                    totalTasks = project.tasks.size
+                )
+            }
         }
 
     }

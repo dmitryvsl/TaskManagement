@@ -14,7 +14,7 @@ import com.example.designsystem.theme.Dark
 
 @Composable
 fun Overlay(
-    color: Color = Dark.copy(alpha = 0.1f),
+    color: Color = Dark.copy(alpha = 0.8f),
     onClick: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
