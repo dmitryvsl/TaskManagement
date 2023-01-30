@@ -40,6 +40,7 @@ import com.example.designsystem.theme.TaskManagementTheme
 import com.example.designsystem.theme.dimens
 import com.example.domain.repository.UserSignInCheckRepository
 import com.example.taskmanagement.navigation.TmNavHost
+import com.example.taskmanagement.navigation.TopLevelDestination
 import com.example.taskmanagement.utils.SharedPreferencesUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -86,7 +87,8 @@ class MainActivity : ComponentActivity() {
                             startDestination = startDestination,
                             authGraphStartDestination = authGraphStartDestination,
                             onOnboardingPassed = { sharedPreferencesUtils.markOnboardingPassed() },
-                            onAuthPassed = { isUserSignedIn = true }
+                            onAuthPassed = { isUserSignedIn = true },
+                            navigateToSettings = { appState.navigateToTopLevelDestination(TopLevelDestination.SETTINGS) }
                         )
                     }
                 }

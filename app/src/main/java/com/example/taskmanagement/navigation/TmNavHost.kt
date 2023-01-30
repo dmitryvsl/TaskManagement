@@ -11,7 +11,6 @@ import com.example.dashboard.navigation.dashboardGraph
 import com.example.dashboard.navigation.dashboardHomeRoute
 import com.example.dashboard.navigation.navigateToDashboard
 import com.example.notification.navigation.notification
-import com.example.settings.navigation.navigateToSettings
 import com.example.settings.navigation.settingsGraph
 import com.example.settings.navigation.settingsRoute
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -24,6 +23,7 @@ fun TmNavHost(
     authGraphStartDestination: String,
     onOnboardingPassed: () -> Unit,
     onAuthPassed: () -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimatedNavHost(
@@ -46,9 +46,7 @@ fun TmNavHost(
         )
         dashboardGraph(
             navController = navController,
-            navigateToSettings = {
-                navController.navigateToSettings()
-            }
+            navigateToSettings = navigateToSettings
         )
         chatGraph(dashboardRoute = dashboardHomeRoute)
         notification(settingsRoute = settingsRoute)
