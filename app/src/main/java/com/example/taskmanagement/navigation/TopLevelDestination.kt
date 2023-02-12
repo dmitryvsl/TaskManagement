@@ -1,8 +1,8 @@
 package com.example.taskmanagement.navigation
 
 import androidx.annotation.DrawableRes
-import com.example.feature.dashboard.R as dashboardR
 import com.example.feature.chat.R as chatR
+import com.example.feature.dashboard.R as dashboardR
 import com.example.feature.notification.R as notificationR
 import com.example.feature.settings.R as settingsR
 

@@ -2,7 +2,6 @@ package com.example.domain.repository
 
 import com.example.domain.model.Page
 import com.example.domain.model.Project
-import io.reactivex.Observable
 import io.reactivex.Single
 
 interface ProjectRepository {

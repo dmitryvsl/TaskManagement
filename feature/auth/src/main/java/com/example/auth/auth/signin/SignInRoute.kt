@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.auth.auth.*
-import com.example.designsystem.components.AuthOtherWay
+import com.example.designsystem.components.information.AuthOtherWay
 import com.example.designsystem.components.textfield.Email
 import com.example.designsystem.components.textfield.EmailState
 import com.example.designsystem.theme.dimens
