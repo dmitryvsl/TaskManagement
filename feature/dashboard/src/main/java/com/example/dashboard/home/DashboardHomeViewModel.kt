@@ -1,12 +1,12 @@
 package com.example.dashboard.home
 
-import androidx.lifecycle.MutableLiveData
 import com.example.common.base.BaseViewModel
-import com.example.common.base.DataState
+import com.example.domain.model.DataState
 import com.example.domain.model.Page
 import com.example.domain.model.Project
 import com.example.domain.repository.ProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -14,7 +14,7 @@ class DashboardHomeViewModel @Inject constructor(
     private val projectRepository: ProjectRepository
 ) : BaseViewModel<Project>() {
 
-    override val data: MutableLiveData<DataState<Project>> = MutableLiveData()
+    override val data: MutableStateFlow<DataState<Project>> = MutableStateFlow(DataState.Loading())
     override fun setData(value: DataState<Project>) {
         data.value = value
     }
@@ -24,11 +24,12 @@ class DashboardHomeViewModel @Inject constructor(
     }
 
     fun fetchProject() {
-        val disposable = makeSingleCall(
-            call = projectRepository.fetchProjects(Page()).map { projects -> projects.last() },
-            onSuccess = { value -> setData(DataState.Success(value)) },
-            onError = { e -> setData(DataState.Error(e)) }
+        makeSingleCall(
+            call = { projectRepository.fetchProjects(Page()) },
+            onSuccess = { data ->
+                setData(DataState.Success(data[0]))
+            },
+            onError = { t -> setData(DataState.Error(t)) }
         )
-        compositeDisposable.add(disposable)
     }
 }

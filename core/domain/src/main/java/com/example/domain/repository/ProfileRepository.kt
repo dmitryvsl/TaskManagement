@@ -1,11 +1,11 @@
 package com.example.domain.repository
 
+import com.example.domain.model.DataState
 import com.example.domain.model.User
-import io.reactivex.Single
 
 interface ProfileRepository {
 
-    fun fetchInfo(): Single<User>
+    suspend fun fetchInfo(): DataState<User>
 
-    fun createWorkspace(name: String, email: String): Single<Boolean>
+    suspend fun createWorkspace(name: String, email: String): DataState<Boolean>
 }

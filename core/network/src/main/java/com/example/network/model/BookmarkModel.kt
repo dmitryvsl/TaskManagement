@@ -9,6 +9,6 @@ data class BookmarkModel(
 )
 
 @Serializable
-data class Response(
-    val response: String,
+data class StringResponse(
+    val message: String,
 )

@@ -1,62 +1,46 @@
 package com.example.common.base
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
+import androidx.lifecycle.viewModelScope
+import com.example.domain.model.DataState
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 
 abstract class BaseViewModel<T : Any> : ViewModel() {
 
+    abstract val data: StateFlow<DataState<T>>
 
-    abstract val data: LiveData<DataState<T>>
-    protected var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private var job: Job? = null
     protected abstract fun setData(value: DataState<T>)
 
-    fun makeSingleCall(
-        call: Single<T>,
-        onSuccess: (T) -> Unit,
-        onError: (Throwable) -> Unit
-    ): Disposable {
-        setData(DataState.Loading())
-        return call
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableSingleObserver<T>() {
-                override fun onSuccess(value: T) {
-                    onSuccess(value)
-                }
+    fun <S> makeSingleCall(
+        call: suspend () -> DataState<S>,
+        onSuccess: (S) -> Unit,
+        onError: (Throwable) -> Unit,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO
+    ){
+        job = viewModelScope.launch(dispatcher) {
+            setData(DataState.Loading())
+            var response = call.invoke()
+            if (response is DataState.Error) {
+                onError(response.t)
+                return@launch
+            }
 
-                override fun onError(e: Throwable) {
-                    onError(e)
-                }
-            })
+            response = response as DataState.Success
+            onSuccess(response.data)
+        }
     }
 
-    fun cancelLoading() {
-        compositeDisposable.dispose()
-        clearState()
-    }
-
-    fun clearState(){
+    fun clearState() {
         setData(DataState.Initial())
     }
 
-    override fun onCleared() {
-        cancelLoading()
-        super.onCleared()
+    fun cancelJob(){
+        job?.cancel()
     }
-}
-
-
-sealed class DataState<T> {
-
-    class Initial<T> : DataState<T>()
-    class Success<T>(val data: T) : DataState<T>()
-    class Error<T>(val t: Throwable) : DataState<T>()
-    class Loading<T> : DataState<T>()
 }

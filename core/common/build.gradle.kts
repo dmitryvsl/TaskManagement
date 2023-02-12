@@ -7,9 +7,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:domain"))
 
-    implementation(libs.rxjava)
-    implementation(libs.rxandroid)
     implementation(libs.android.lifecycle.viewmodel)
     implementation(libs.android.lifecycle.livedata)
 }

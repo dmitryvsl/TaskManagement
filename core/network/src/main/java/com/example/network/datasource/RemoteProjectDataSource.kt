@@ -1,14 +1,14 @@
 package com.example.network.datasource
 
+import com.example.domain.model.DataState
 import com.example.network.model.project.FetchProjectType
 import com.example.network.model.project.ProjectResponseModel
-import io.reactivex.Single
 
 interface RemoteProjectDataSource {
 
-    fun fetchProjects(token: String, startAt: Int, limit: Int, type: FetchProjectType): Single<List<ProjectResponseModel>>
+    suspend fun fetchProjects(token: String, startAt: Int, limit: Int, type: FetchProjectType): DataState<List<ProjectResponseModel>>
 
-    fun addBookmark(token: String, projectId: Int)
-    fun deleteBookmark(token: String, projectId: Int)
+    suspend fun addBookmark(token: String, projectId: Int)
+    suspend fun deleteBookmark(token: String, projectId: Int)
 
 }

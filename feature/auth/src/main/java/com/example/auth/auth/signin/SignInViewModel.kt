@@ -1,10 +1,10 @@
 package com.example.auth.auth.signin
 
-import androidx.lifecycle.MutableLiveData
 import com.example.common.base.BaseViewModel
-import com.example.common.base.DataState
+import com.example.domain.model.DataState
 import com.example.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -13,19 +13,16 @@ class SignInViewModel @Inject constructor(
 ) : BaseViewModel<Boolean>() {
 
     fun signInUser(email: String, password: String) {
-        val disposable = makeSingleCall(
-            call = authRepository.signInUser(email, password),
-            onSuccess = { value -> setData(DataState.Success(value)) },
+        makeSingleCall(
+            call = { authRepository.signInUser(email, password) },
+            onSuccess = { data -> setData(DataState.Success(data)) },
             onError = { e -> setData(DataState.Error(e)) }
         )
-        compositeDisposable.add(disposable)
     }
 
-    override val data: MutableLiveData<DataState<Boolean>> = MutableLiveData()
+    override val data: MutableStateFlow<DataState<Boolean>> = MutableStateFlow(DataState.Initial())
 
     override fun setData(value: DataState<Boolean>) {
         data.value = value
     }
-
-
 }

@@ -14,7 +14,6 @@ dependencies {
     implementation(project(":core:common"))
 
     // Compose
-    implementation(libs.compose.livedata)
     implementation(libs.compose.hilt.navigation)
 
     //Accompanist
@@ -22,8 +21,4 @@ dependencies {
     implementation(libs.accompanist.pager.indicators)
 
     implementation(libs.accompanist.navigation)
-
-    //Rxjava2
-    implementation(libs.rxjava)
-    implementation(libs.rxandroid)
 }

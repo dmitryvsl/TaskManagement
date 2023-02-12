@@ -21,8 +21,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -31,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.common.base.DataState
 import com.example.designsystem.components.appbar.TmTopAppBar
 import com.example.designsystem.components.overlay.InformationDialog
 import com.example.designsystem.components.overlay.LoadingOverlay
@@ -41,6 +40,7 @@ import com.example.designsystem.components.textfield.TextFieldError
 import com.example.designsystem.components.textfield.TmOutlinedTextField
 import com.example.designsystem.theme.dimens
 import com.example.domain.exception.NoInternetException
+import com.example.domain.model.DataState
 import com.example.feature.settings.R
 
 @Composable
@@ -49,11 +49,15 @@ fun CreateWorkspaceScreen(
     onBackClick: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val data by viewModel.data.observeAsState(DataState.Initial())
+    val data by viewModel.data.collectAsState()
 
     Box(Modifier.fillMaxSize()) {
         when (data) {
-            is DataState.Loading -> LoadingOverlay { viewModel.cancelLoading() }
+            is DataState.Loading -> LoadingOverlay {
+                viewModel.cancelJob()
+                viewModel.clearState()
+            }
+
             is DataState.Error -> when ((data as DataState.Error<Boolean>).t) {
                 is NoInternetException -> InformationDialog(message = stringResource(R.string.noInternet)) {
                     viewModel.clearState()

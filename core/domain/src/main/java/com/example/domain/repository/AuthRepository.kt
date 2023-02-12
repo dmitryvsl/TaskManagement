@@ -1,17 +1,17 @@
 package com.example.domain.repository
 
-import io.reactivex.Single
+import com.example.domain.model.DataState
 
 interface AuthRepository {
 
-    fun signInUser(email: String, password: String): Single<Boolean>
+    suspend fun signInUser(email: String, password: String): DataState<Boolean>
 
-    fun sendResetPasswordEmail(email: String): Single<Boolean>
+    suspend fun sendResetPasswordEmail(email: String): DataState<Boolean>
 
 }
 
 interface MutableAuthRepository {
-    fun createUser(email: String, password: String): Single<Boolean>
+    suspend fun createUser(email: String, password: String): DataState<Boolean>
 }
 
 interface UserSignInCheckRepository{

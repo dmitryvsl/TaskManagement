@@ -1,17 +1,17 @@
 package com.example.domain.repository
 
+import com.example.domain.model.DataState
 import com.example.domain.model.Page
 import com.example.domain.model.Project
-import io.reactivex.Single
 
 interface ProjectRepository {
 
-    fun fetchProjects(page: Page): Single<List<Project>>
+    suspend fun fetchProjects(page: Page): DataState<List<Project>>
 
-    fun fetchBookmarks(page: Page): Single<List<Project>>
+    suspend fun fetchBookmarks(page: Page): DataState<List<Project>>
 
-    fun fetchCompleted(page: Page): Single<List<Project>>
+    suspend fun fetchCompleted(page: Page): DataState<List<Project>>
 
-    fun addBookmark(projectId: Int)
-    fun deleteBookmark(projectId: Int)
+    suspend fun addBookmark(projectId: Int)
+    suspend fun deleteBookmark(projectId: Int)
 }

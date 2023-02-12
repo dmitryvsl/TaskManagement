@@ -5,7 +5,7 @@ data class Page(
     val limit: Int = 10,
     private var isLastPage: Boolean = false,
 ) {
-    fun setIsLastPage(lastResponseValuesCount: Int) {
+    fun checkIsLastPage(lastResponseValuesCount: Int) {
         isLastPage = lastResponseValuesCount < limit
     }
 

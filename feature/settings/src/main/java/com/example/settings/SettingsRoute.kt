@@ -26,8 +26,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.common.base.DataState
 import com.example.designsystem.components.TopLevelAppBar
 import com.example.designsystem.components.information.ErrorMessageWithAction
 import com.example.designsystem.extension.shimmerEffect
@@ -44,6 +43,7 @@ import com.example.designsystem.theme.Black
 import com.example.designsystem.theme.LightGray
 import com.example.designsystem.theme.dimens
 import com.example.domain.exception.NoInternetException
+import com.example.domain.model.DataState
 import com.example.domain.model.User
 import com.example.feature.settings.R
 
@@ -67,7 +67,7 @@ fun SettingsRoute(
             modifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
         )
 
-        val data: DataState<User> by viewModel.data.observeAsState(DataState.Initial())
+        val data: DataState<User> by viewModel.data.collectAsState()
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingExtraLarge))
 

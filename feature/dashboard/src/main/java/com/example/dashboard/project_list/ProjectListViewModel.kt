@@ -1,17 +1,17 @@
 package com.example.dashboard.project_list
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.common.base.BaseViewModel
-import com.example.common.base.DataState
 import com.example.common.extension.replace
 import com.example.domain.exception.InformationNotFound
+import com.example.domain.model.DataState
 import com.example.domain.model.Page
 import com.example.domain.model.Project
 import com.example.domain.repository.ProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,11 +20,11 @@ class ProjectListViewModel @Inject constructor(
     private val repository: ProjectRepository
 ) : BaseViewModel<List<Project>>() {
 
-    override val data: MutableLiveData<DataState<List<Project>>> =
-        MutableLiveData(DataState.Initial())
+    override val data: MutableStateFlow<DataState<List<Project>>> =
+        MutableStateFlow(DataState.Initial())
 
     override fun setData(value: DataState<List<Project>>) {
-        if (value is DataState.Success) allProjectsPage.setIsLastPage(value.data.size)
+        if (value is DataState.Success) allProjectsPage.checkIsLastPage(value.data.size)
         data.value = value
     }
 
@@ -32,13 +32,13 @@ class ProjectListViewModel @Inject constructor(
     private val completedProjectsPage = Page()
     private val bookmarkedProjectsPage = Page()
 
-    private val _completedProjects: MutableLiveData<DataState<List<Project>>> =
-        MutableLiveData(DataState.Initial())
-    val completedProjects: LiveData<DataState<List<Project>>> = _completedProjects
+    private val _completedProjects: MutableStateFlow<DataState<List<Project>>> =
+        MutableStateFlow(DataState.Initial())
+    val completedProjects: StateFlow<DataState<List<Project>>> = _completedProjects
 
-    private val _bookmarkedProjects: MutableLiveData<DataState<List<Project>>> =
-        MutableLiveData(DataState.Initial())
-    val bookmarkedProjects: LiveData<DataState<List<Project>>> = _bookmarkedProjects
+    private val _bookmarkedProjects: MutableStateFlow<DataState<List<Project>>> =
+        MutableStateFlow(DataState.Initial())
+    val bookmarkedProjects: StateFlow<DataState<List<Project>>> = _bookmarkedProjects
 
 
     init {
@@ -102,23 +102,26 @@ class ProjectListViewModel @Inject constructor(
     }
 
     fun fetchProjects() {
-        val disposable = makeSingleCall(call = repository.fetchProjects(allProjectsPage),
-            onSuccess = { value -> setData(DataState.Success(value)) },
-            onError = { e -> setData(DataState.Error(e)) })
-        compositeDisposable.add(disposable)
+        makeSingleCall(
+            call = { repository.fetchProjects(allProjectsPage) },
+            onSuccess = { data -> setData(DataState.Success(data)) },
+            onError = { e -> setData(DataState.Error(e)) }
+        )
     }
 
     fun fetchBookmarks() {
-        val disposable = makeSingleCall(call = repository.fetchBookmarks(bookmarkedProjectsPage),
-            onSuccess = { value -> _bookmarkedProjects.value = DataState.Success(value) },
-            onError = { e -> _bookmarkedProjects.value = DataState.Error(e) })
-        compositeDisposable.add(disposable)
+        makeSingleCall(
+            call = { repository.fetchBookmarks(bookmarkedProjectsPage) },
+            onSuccess = { data -> setData(DataState.Success(data)) },
+            onError = { e -> setData(DataState.Error(e)) }
+        )
     }
 
     fun fetchCompleted() {
-        val disposable = makeSingleCall(call = repository.fetchCompleted(completedProjectsPage),
-            onSuccess = { value -> _completedProjects.value = DataState.Success(value) },
-            onError = { e -> _completedProjects.value = DataState.Error(e) })
-        compositeDisposable.add(disposable)
+        makeSingleCall(
+            call = { repository.fetchCompleted(completedProjectsPage) },
+            onSuccess = { data -> setData(DataState.Success(data)) },
+            onError = { e -> setData(DataState.Error(e)) }
+        )
     }
 }
