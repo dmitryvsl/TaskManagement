@@ -4,9 +4,9 @@ import android.util.Log
 import com.example.domain.exception.InformationNotFound
 import com.example.domain.exception.UserNotInWorkspace
 import com.example.network.model.BookmarkModel
-import com.example.network.model.FetchProjectType
-import com.example.network.model.NetworkProject
-import com.example.network.model.RemoteProjectModel
+import com.example.network.model.project.FetchProjectType
+import com.example.network.model.project.ProjectRequestModel
+import com.example.network.model.project.ProjectResponseModel
 import com.example.network.remote.ApiService
 import com.example.network.utils.HttpStatusCode
 import com.example.network.utils.RetrofitExceptionHandler
@@ -24,17 +24,17 @@ class RemoteProjectDataSourceImpl @Inject constructor(
 
     override fun fetchProjects(
         token: String, startAt: Int, limit: Int, type: FetchProjectType
-    ): Single<List<NetworkProject>> = Single.create { emitter ->
-        val model = RemoteProjectModel(token, startAt, limit)
+    ): Single<List<ProjectResponseModel>> = Single.create { emitter ->
+        val model = ProjectRequestModel(token, startAt, limit)
         val call = when (type) {
             FetchProjectType.ALL -> apiService.fetchProjects(model)
             FetchProjectType.COMPLETED -> apiService.fetchCompletedProjects(model)
             FetchProjectType.BOOKMARK -> apiService.fetchBookmarkProjects(model)
         }
 
-        call.enqueue(object : Callback<List<NetworkProject>> {
+        call.enqueue(object : Callback<List<ProjectResponseModel>> {
             override fun onResponse(
-                call: Call<List<NetworkProject>>, response: Response<List<NetworkProject>>
+                call: Call<List<ProjectResponseModel>>, response: Response<List<ProjectResponseModel>>
             ) {
                 when (response.code()){
                     HttpStatusCode.Ok.code -> {
@@ -49,7 +49,7 @@ class RemoteProjectDataSourceImpl @Inject constructor(
                 emitter.onError(UnknownError())
             }
 
-            override fun onFailure(call: Call<List<NetworkProject>>, t: Throwable) {
+            override fun onFailure(call: Call<List<ProjectResponseModel>>, t: Throwable) {
                 Log.e(TAG, "onFailure: $t")
                 emitter.onError(exceptionHandler.handle(t))
             }

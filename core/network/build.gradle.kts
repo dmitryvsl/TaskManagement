@@ -1,11 +1,19 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("taskmanagement.android.library")
     id("taskmanagement.android.hilt")
     alias(libs.plugins.kotlin.serialization)
 }
 
+val baseUrl: String = gradleLocalProperties(rootDir).getProperty("baseUrl")
+
 android {
     namespace = "com.example.network"
+
+    defaultConfig {
+        buildConfigField("String", "BASE_URL", baseUrl)
+    }
 }
 
 dependencies {

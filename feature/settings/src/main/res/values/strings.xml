@@ -1,3 +1,15 @@
 <resources>
     <string name="settings">Settings</string>
+    <string name="companyWorkspace">Company workspace</string>
+    <string name="addWorkspace">Add a workspace</string>
+    <string name="edit">Edit</string>
+    <string name="tryAgain">Try again</string>
+    <string name="loadingError">Loading error. Please, try again</string>
+    <string name="errorOccured">Some error occurred</string>
+    <string name="user">User</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="create">Create</string>
+    <string name="noInternet">No internet connection. Please, try again</string>
+    <string name="createWorkspace">Create workspace</string>
 </resources>

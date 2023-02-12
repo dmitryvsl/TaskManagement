@@ -10,7 +10,7 @@ android {
 dependencies {
     implementation(project(":core:domain"))
 
-    implementation(libs.coil)
+    api(libs.coil)
 
     api(libs.compose.material)
     api(libs.compose.ui)

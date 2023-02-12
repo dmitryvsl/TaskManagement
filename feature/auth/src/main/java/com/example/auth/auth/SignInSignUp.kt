@@ -3,81 +3,47 @@ package com.example.auth.auth
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.runtime.*
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import com.example.common.BaseViewModel
-import com.example.common.DataState
-import com.example.designsystem.components.Overlay
+import com.example.common.base.BaseViewModel
+import com.example.common.base.DataState
+import com.example.designsystem.components.overlay.InformationDialog
+import com.example.designsystem.components.overlay.LoadingOverlay
 import com.example.designsystem.components.textfield.TextFieldError
-import com.example.designsystem.components.textfield.TmOutlinedTextField
 import com.example.designsystem.components.textfield.TextFieldState
+import com.example.designsystem.components.textfield.TmOutlinedTextField
 import com.example.designsystem.theme.dimens
-import com.example.domain.exception.*
+import com.example.domain.exception.IncorrectDataException
+import com.example.domain.exception.NoInternetException
+import com.example.domain.exception.UserAlreadyExist
+import com.example.domain.exception.UserAuthException
+import com.example.domain.exception.UserNotExist
 import com.example.feature.auth.R
 
-
-/**
- * Textfield for entering email
- */
-@Composable
-internal fun Email(
-    modifier: Modifier = Modifier,
-    emailState: TextFieldState = remember { EmailState() },
-    imeAction: ImeAction = ImeAction.Next,
-    onImeAction: () -> Unit = {}
-) {
-    TmOutlinedTextField(
-        modifier = modifier,
-        value = emailState.text,
-        onValueChange = { emailState.text = it },
-        onFocusChanged = { focusState ->
-            emailState.onFocusChange(focusState.isFocused)
-            if (!focusState.isFocused) emailState.enableShowErrors()
-        },
-        placeholder = {
-            Text(
-                text = stringResource(id = R.string.email),
-                style = MaterialTheme.typography.body2
-            )
-        },
-        isError = emailState.showErrors(),
-        leadingIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_mail),
-                contentDescription = null,
-                tint = MaterialTheme.colors.onBackground
-            )
-        },
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = imeAction,
-            keyboardType = KeyboardType.Email
-        ),
-        keyboardActions = KeyboardActions(onDone = { onImeAction() }),
-    )
-    Box(
-        modifier = modifier.height(MaterialTheme.dimens.paddingExtraLarge)
-    ) {
-        emailState.getError()?.let { error -> TextFieldError(textError = error) }
-    }
-}
 
 /**
  * Textfield for entering password
@@ -167,84 +133,10 @@ internal fun AuthHeader(
 }
 
 /**
- * Occupy all screen with transparent overlay and show Progress bar and cancel Icon
- */
-@Composable
-internal fun LoadingOverlay(
-    onCancelClick: () -> Unit,
-) {
-    Overlay {
-        Surface(
-            modifier = Modifier.size(200.dp),
-            color = MaterialTheme.colors.background,
-            shape = MaterialTheme.shapes.large,
-            elevation = 4.dp,
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    strokeWidth = 4.dp,
-                    color = MaterialTheme.colors.secondary
-                )
-                Icon(
-                    modifier = Modifier
-                        .size(MaterialTheme.dimens.minimumTouchTarget)
-                        .clip(CircleShape)
-                        .clickable { onCancelClick() }
-                        .padding(MaterialTheme.dimens.paddingMedium),
-                    imageVector = Icons.Outlined.Close,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.secondary
-                )
-            }
-        }
-    }
-}
-
-/**
- * Occupy all screen with transparent overlay and show message
- */
-@Composable
-internal fun InformationDialog(
-    message: String,
-    onCloseClick: () -> Unit
-) {
-    AlertDialog(
-        text = {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground,
-                textAlign = TextAlign.Center
-            )
-        },
-        shape = MaterialTheme.shapes.medium,
-        backgroundColor = MaterialTheme.colors.background,
-        onDismissRequest = onCloseClick,
-        buttons = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ){
-                Button(onClick = { onCloseClick() }) {
-                    Text(
-                        text = stringResource(id = R.string.close),
-                        style = MaterialTheme.typography.body2
-                    )
-                }
-            }
-        }
-    )
-}
-
-
-/**
  * Represent Data state: Loading, Error, Success. Show information dialogs according to state
  */
 @Composable
-fun CallStateRepresenter(
+fun DataStateRepresenter(
     viewModel: BaseViewModel<Boolean>,
     onCallSuccess: () -> Unit,
     noInternetExceptionMessage: String = stringResource(R.string.noInternetConnection),

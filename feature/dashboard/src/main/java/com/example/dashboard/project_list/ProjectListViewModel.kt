@@ -3,8 +3,9 @@ package com.example.dashboard.project_list
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.common.BaseViewModel
-import com.example.common.DataState
+import com.example.common.base.BaseViewModel
+import com.example.common.base.DataState
+import com.example.common.extension.replace
 import com.example.domain.exception.InformationNotFound
 import com.example.domain.model.Page
 import com.example.domain.model.Project
@@ -119,11 +120,5 @@ class ProjectListViewModel @Inject constructor(
             onSuccess = { value -> _completedProjects.value = DataState.Success(value) },
             onError = { e -> _completedProjects.value = DataState.Error(e) })
         compositeDisposable.add(disposable)
-    }
-}
-
-fun <T> List<T>.replace(newValue: T, block: (T) -> Boolean): List<T> {
-    return map {
-        if (block(it)) newValue else it
     }
 }

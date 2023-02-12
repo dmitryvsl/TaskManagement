@@ -1,13 +1,8 @@
 package com.example.dashboard.project_list
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,18 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,21 +29,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.common.DataState
+import com.example.common.base.DataState
 import com.example.dashboard.home.components.Search
 import com.example.dashboard.home.components.SearchState
 import com.example.designsystem.components.BookmarkOverlay
-import com.example.designsystem.components.Overlay
+import com.example.designsystem.components.appbar.TmTopAppBar
 import com.example.designsystem.components.card.ProjectCard
 import com.example.designsystem.components.information.ErrorMessageWithAction
 import com.example.designsystem.components.information.InformationMessage
 import com.example.designsystem.components.information.Loading
 import com.example.designsystem.components.tab.TmTabLayout
-import com.example.designsystem.theme.White
 import com.example.designsystem.theme.dimens
 import com.example.domain.exception.InformationNotFound
 import com.example.domain.exception.NoInternetException
@@ -83,7 +71,21 @@ fun ProjectListRoute(
         TmTopAppBar(modifier = modifier,
             title = stringResource(R.string.project),
             onBackClick = onBackClick,
-            onActionClick = {})
+            action = {
+                Button(
+                    modifier = Modifier.size(MaterialTheme.dimens.minimumTouchTarget),
+                    onClick = {},
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.primary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onPrimary
+                    )
+                }
+            })
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingDefault))
 
@@ -201,44 +203,6 @@ fun ProjectListScreen(
                     }
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun TmTopAppBar(
-    title: String, onBackClick: () -> Unit, onActionClick: () -> Unit, modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(modifier = Modifier
-            .size(MaterialTheme.dimens.minimumTouchTarget)
-            .clip(CircleShape)
-            .clickable { onBackClick() }
-            .padding(MaterialTheme.dimens.paddingSmall),
-            imageVector = Icons.Rounded.KeyboardArrowLeft,
-            contentDescription = null,
-            tint = MaterialTheme.colors.onBackground)
-        Text(
-            text = title,
-            style = MaterialTheme.typography.h2,
-            color = MaterialTheme.colors.onBackground
-        )
-        Button(
-            modifier = Modifier.size(MaterialTheme.dimens.minimumTouchTarget),
-            onClick = onActionClick,
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.primary
-            )
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colors.onPrimary
-            )
         }
     }
 }

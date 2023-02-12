@@ -38,7 +38,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.common.DataState
+import com.example.common.base.DataState
 import com.example.dashboard.home.components.CurrentProject
 import com.example.dashboard.home.components.SearchRow
 import com.example.dashboard.home.components.SearchState

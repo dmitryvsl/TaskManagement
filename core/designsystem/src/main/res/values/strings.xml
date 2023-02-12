@@ -3,4 +3,6 @@
     <string name="inDevelopment">Feature currentrly in Development</string>
     <string name="flag">Flag</string>
     <string name="unflag">Unflag</string>
+    <string name="email">Email</string>
+    <string name="close">Close</string>
 </resources>
