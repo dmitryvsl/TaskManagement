@@ -1,19 +1,14 @@
 package com.example.auth.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
-import com.example.auth.auth.signin.SignInRoute
 import com.example.auth.auth.forgotpassword.ForgotPasswordRoute
+import com.example.auth.auth.signin.SignInRoute
 import com.example.auth.auth.signup.SignUpRoute
 import com.example.auth.onboarding.OnboardingRoute
 import com.example.designsystem.utils.animationDuration

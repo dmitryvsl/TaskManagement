@@ -15,10 +15,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.designsystem.components.AuthOtherWay
-import com.example.designsystem.theme.Gray
 import com.example.auth.onboarding.model.Page
 import com.example.auth.onboarding.model.onboardPages
+import com.example.designsystem.components.information.AuthOtherWay
+import com.example.designsystem.theme.Gray
 import com.example.designsystem.theme.dimens
 import com.example.feature.auth.R
 import com.google.accompanist.pager.*
