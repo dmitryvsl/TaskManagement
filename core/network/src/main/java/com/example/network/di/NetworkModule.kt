@@ -1,5 +1,6 @@
 package com.example.network.di
 
+import com.example.network.BuildConfig
 import com.example.network.datasource.RemoteProjectDataSource
 import com.example.network.datasource.RemoteProjectDataSourceImpl
 import com.example.network.datasource.RemoteUserDataSource
@@ -29,11 +30,11 @@ interface NetworkModule {
 
     companion object {
         @Provides
-        fun provideAuthService() = createRetrofit().create(ApiService::class.java)
+        fun provideAuthService(): ApiService = createRetrofit().create(ApiService::class.java)
 
         @OptIn(ExperimentalSerializationApi::class)
         private fun createRetrofit() = Retrofit.Builder()
-            .baseUrl("http://192.168.0.5:8080/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
             .client(okHttp())
             .build()

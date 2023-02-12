@@ -6,7 +6,7 @@ import com.example.domain.model.Page
 import com.example.domain.model.Project
 import com.example.domain.repository.ProjectRepository
 import com.example.network.datasource.RemoteProjectDataSource
-import com.example.network.model.FetchProjectType
+import com.example.network.model.project.FetchProjectType
 import io.reactivex.Single
 import javax.inject.Inject
 

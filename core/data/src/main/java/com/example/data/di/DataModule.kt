@@ -2,6 +2,7 @@ package com.example.data.di
 
 import com.example.cache.datasource.LocalUserDataSource
 import com.example.data.repository.AuthRepositoryImpl
+import com.example.data.repository.ProfileRepositoryImpl
 import com.example.data.repository.ProjectRepositoryImpl
 import com.example.domain.repository.*
 import com.example.network.datasource.RemoteProjectDataSource
@@ -35,5 +36,10 @@ class DataModule {
     fun provideProjectRepository(
         remoteDataSource: RemoteProjectDataSource, localUserDataSource: LocalUserDataSource
     ): ProjectRepository = ProjectRepositoryImpl(remoteDataSource, localUserDataSource)
+
+    @Provides
+    fun provideProfileRepository(
+        dataSource: RemoteUserDataSource, localUserDataSource: LocalUserDataSource
+    ): ProfileRepository = ProfileRepositoryImpl(dataSource, localUserDataSource)
 
 }

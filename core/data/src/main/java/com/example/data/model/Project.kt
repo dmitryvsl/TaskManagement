@@ -1,9 +1,9 @@
 package com.example.data.model
 
 import com.example.domain.model.Project
-import com.example.network.model.NetworkProject
+import com.example.network.model.project.ProjectResponseModel
 
-fun NetworkProject.asDomain() = Project(
+fun ProjectResponseModel.asDomain() = Project(
     id = this.id,
     title = this.name,
     startDate = this.startDate,

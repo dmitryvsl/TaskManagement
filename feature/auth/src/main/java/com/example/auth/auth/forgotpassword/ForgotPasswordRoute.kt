@@ -24,10 +24,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.auth.auth.CallStateRepresenter
-import com.example.auth.auth.Email
-import com.example.auth.auth.EmailState
-import com.example.auth.auth.InformationDialog
+import com.example.auth.auth.DataStateRepresenter
+import com.example.designsystem.components.overlay.InformationDialog
+import com.example.designsystem.components.textfield.Email
+import com.example.designsystem.components.textfield.EmailState
 import com.example.designsystem.theme.dimens
 import com.example.feature.auth.R
 
@@ -48,7 +48,7 @@ fun ForgotPasswordRoute(
         onBackClick()
     }
 
-    CallStateRepresenter(
+    DataStateRepresenter(
         viewModel = viewModel,
         onCallSuccess = { showInformationOverlay = !showInformationOverlay },
         invalidEmailOrPasswordExceptionMessage = stringResource(R.string.invalidEmail)

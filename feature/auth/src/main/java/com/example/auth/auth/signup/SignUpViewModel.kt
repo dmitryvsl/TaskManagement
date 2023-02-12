@@ -1,8 +1,8 @@
 package com.example.auth.auth.signup
 
 import androidx.lifecycle.MutableLiveData
-import com.example.common.BaseViewModel
-import com.example.common.DataState
+import com.example.common.base.BaseViewModel
+import com.example.common.base.DataState
 import com.example.domain.repository.MutableAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

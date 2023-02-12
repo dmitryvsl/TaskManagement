@@ -18,13 +18,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.auth.auth.*
 import com.example.designsystem.components.AuthOtherWay
+import com.example.designsystem.components.textfield.Email
+import com.example.designsystem.components.textfield.EmailState
 import com.example.designsystem.theme.dimens
 import com.example.feature.auth.R
 
@@ -45,7 +45,7 @@ fun SignInRoute(
 
     val modifier: Modifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingDefault)
 
-    CallStateRepresenter(viewModel = viewModel, onCallSuccess = onSignIn)
+    DataStateRepresenter(viewModel = viewModel, onCallSuccess = onSignIn)
 
     Column(
         modifier = Modifier

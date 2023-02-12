@@ -50,6 +50,6 @@ fun TmNavHost(
         )
         chatGraph(dashboardRoute = dashboardHomeRoute)
         notification(settingsRoute = settingsRoute)
-        settingsGraph()
+        settingsGraph(navController = navController)
     }
 }
