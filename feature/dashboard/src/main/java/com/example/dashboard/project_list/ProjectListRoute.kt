@@ -20,8 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.common.base.DataState
 import com.example.dashboard.home.components.Search
 import com.example.dashboard.home.components.SearchState
 import com.example.designsystem.components.BookmarkOverlay
@@ -44,6 +43,7 @@ import com.example.designsystem.components.tab.TmTabLayout
 import com.example.designsystem.theme.dimens
 import com.example.domain.exception.InformationNotFound
 import com.example.domain.exception.NoInternetException
+import com.example.domain.model.DataState
 import com.example.domain.model.Project
 import com.example.feature.dashboard.R
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -56,9 +56,9 @@ import kotlinx.coroutines.launch
 fun ProjectListRoute(
     viewModel: ProjectListViewModel = hiltViewModel(), onBackClick: () -> Unit
 ) {
-    val allProjectsState by viewModel.data.observeAsState(DataState.Initial())
-    val completedProjectsState by viewModel.completedProjects.observeAsState(DataState.Initial())
-    val bookmarkedProjectsState by viewModel.bookmarkedProjects.observeAsState(DataState.Initial())
+    val allProjectsState by viewModel.data.collectAsState()
+    val completedProjectsState by viewModel.completedProjects.collectAsState()
+    val bookmarkedProjectsState by viewModel.bookmarkedProjects.collectAsState()
 
     Column(
         modifier = Modifier

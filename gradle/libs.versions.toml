@@ -21,9 +21,6 @@ navigation = "2.5.3"
 retrofit = "2.9.0"
 okhttp = "4.10.0"
 
-#RxJava2
-rxjava = "2.1.1"
-
 agp = "7.3.1"
 accompanist = "0.28.0"
 daggerHilt = "2.44"
@@ -58,7 +55,6 @@ compose-activity = { group = "androidx.activity", name = "activity-compose", ver
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-material = { group = "androidx.compose.material", name = "material" }
 compose-hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-compose-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
@@ -79,10 +75,6 @@ junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 junit-ext = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
 junit-compose = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
-
-#RxJava2
-rxjava = { group = "io.reactivex.rxjava2", name = "rxjava", version.ref = "rxjava" }
-rxandroid = { group = "io.reactivex.rxjava2", name = "rxandroid", version.ref = "rxjava" }
 
 #@gradle plugin classpath
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

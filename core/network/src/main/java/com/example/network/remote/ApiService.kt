@@ -1,7 +1,7 @@
 package com.example.network.remote
 
 import com.example.network.model.BookmarkModel
-import com.example.network.model.Response
+import com.example.network.model.StringResponse
 import com.example.network.model.TokenResponse
 import com.example.network.model.project.ProjectRequestModel
 import com.example.network.model.project.ProjectResponseModel
@@ -9,42 +9,35 @@ import com.example.network.model.user.UserProfileResponseModel
 import com.example.network.model.user.UserRequestModel
 import com.example.network.model.workspace.CreateWorkspaceRequest
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface ApiService {
-    @Headers("Accept: application/json")
     @POST("user/signin")
-    fun signinUser(@Body user: UserRequestModel): Call<TokenResponse>
+    suspend fun signinUser(@Body user: UserRequestModel): Response<TokenResponse>
 
-    @Headers("Accept: application/json")
     @POST("user/create")
-    fun createUser(@Body user: UserRequestModel): Call<TokenResponse>
+    suspend fun createUser(@Body user: UserRequestModel): Response<TokenResponse>
 
-    @Headers("Accept: application/json")
     @POST("/projects")
-    fun fetchProjects(@Body model: ProjectRequestModel): Call<List<ProjectResponseModel>>
+    suspend fun fetchProjects(@Body model: ProjectRequestModel): Response<List<ProjectResponseModel>>
 
-    @Headers("Accept: application/json")
     @POST("/projects/completed")
-    fun fetchCompletedProjects(@Body model: ProjectRequestModel): Call<List<ProjectResponseModel>>
+    suspend fun fetchCompletedProjects(@Body model: ProjectRequestModel): Response<List<ProjectResponseModel>>
 
-    @Headers("Accept: application/json")
     @POST("/projects/bookmarks")
-    fun fetchBookmarkProjects(@Body model: ProjectRequestModel): Call<List<ProjectResponseModel>>
+    suspend fun fetchBookmarkProjects(@Body model: ProjectRequestModel): Response<List<ProjectResponseModel>>
 
-    @Headers("Accept: application/json")
     @POST("/projects/bookmarks/add")
-    fun addBookmark(@Body model: BookmarkModel): Call<Response>
+    fun addBookmark(@Body model: BookmarkModel): Call<StringResponse>
 
-    @Headers("Accept: application/json")
     @POST("/projects/bookmarks/delete")
-    fun deleteBookmark(@Body model: BookmarkModel) : Call<Response>
+    fun deleteBookmark(@Body model: BookmarkModel): Call<StringResponse>
 
     @POST("user/info")
-    fun fetchUserInfo(@Body tokenResponse: TokenResponse): Call<UserProfileResponseModel>
+    suspend fun fetchUserInfo(@Body tokenResponse: TokenResponse): Response<UserProfileResponseModel>
 
     @POST("workspace/create")
-    fun createWorkspace(@Body model: CreateWorkspaceRequest): Call<UserProfileResponseModel>
+    suspend fun createWorkspace(@Body model: CreateWorkspaceRequest): Response<UserProfileResponseModel>
 }

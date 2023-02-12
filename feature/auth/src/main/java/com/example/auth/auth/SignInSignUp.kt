@@ -16,8 +16,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,7 +30,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.example.common.base.BaseViewModel
-import com.example.common.base.DataState
 import com.example.designsystem.components.overlay.InformationDialog
 import com.example.designsystem.components.overlay.LoadingOverlay
 import com.example.designsystem.components.textfield.TextFieldError
@@ -42,6 +41,7 @@ import com.example.domain.exception.NoInternetException
 import com.example.domain.exception.UserAlreadyExist
 import com.example.domain.exception.UserAuthException
 import com.example.domain.exception.UserNotExist
+import com.example.domain.model.DataState
 import com.example.feature.auth.R
 
 
@@ -146,7 +146,7 @@ fun DataStateRepresenter(
     userNotExistMessage: String = stringResource(R.string.enteredEmailDoesntExist),
     undefinedExceptionMessage: String = stringResource(R.string.someErrorOccured)
 ) {
-    val state: DataState<Boolean> by viewModel.data.observeAsState(DataState.Initial())
+    val state: DataState<Boolean> by viewModel.data.collectAsState()
 
     val onError: @Composable (message: String) -> Unit = { message ->
         InformationDialog(message = message) { viewModel.clearState() }

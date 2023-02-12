@@ -18,7 +18,6 @@ android {
 
 dependencies {
     implementation(project(":core:domain"))
-    implementation(libs.rxjava)
 
     // Retrofit
     implementation(libs.retrofit)

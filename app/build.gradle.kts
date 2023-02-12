@@ -49,9 +49,6 @@ dependencies {
     //Compose
     implementation(libs.compose.activity)
 
-    //RxJava
-    implementation(libs.rxjava)
-
     // Accompanist
     implementation(libs.accompanist.systemui)
     implementation(libs.accompanist.navigation)

@@ -44,7 +44,14 @@ interface NetworkModule {
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
             return OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
+                .addInterceptor { chain ->
+                    val request =
+                        chain.request().newBuilder().addHeader("Accept", "application/json").build()
+                    chain.proceed(request)
+                }
                 .build()
         }
+
+
     }
 }

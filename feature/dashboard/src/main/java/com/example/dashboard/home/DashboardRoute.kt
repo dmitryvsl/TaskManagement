@@ -22,8 +22,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,7 +38,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.common.base.DataState
 import com.example.dashboard.home.components.CurrentProject
 import com.example.dashboard.home.components.SearchRow
 import com.example.dashboard.home.components.SearchState
@@ -54,6 +53,7 @@ import com.example.designsystem.theme.dimens
 import com.example.domain.exception.InformationNotFound
 import com.example.domain.exception.NoInternetException
 import com.example.domain.exception.UserNotInWorkspace
+import com.example.domain.model.DataState
 import com.example.domain.model.Project
 import com.example.feature.dashboard.R
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -69,7 +69,7 @@ fun DashboardRoute(
     navigateToSettings: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val state by viewModel.data.observeAsState(DataState.Initial())
+    val state by viewModel.data.collectAsState()
     val contentModifier = Modifier.padding(horizontal = MaterialTheme.dimens.paddingExtraLarge)
 
     BoxWithConstraints(Modifier.statusBarsPadding()) {

@@ -1,30 +1,32 @@
 package com.example.network.datasource
 
-import android.util.Log
 import com.example.domain.exception.InformationNotFound
 import com.example.domain.exception.UserNotInWorkspace
+import com.example.domain.model.DataState
 import com.example.network.model.BookmarkModel
+import com.example.network.model.ResponseDataState
 import com.example.network.model.project.FetchProjectType
 import com.example.network.model.project.ProjectRequestModel
 import com.example.network.model.project.ProjectResponseModel
 import com.example.network.remote.ApiService
 import com.example.network.utils.HttpStatusCode
-import com.example.network.utils.RetrofitExceptionHandler
-import io.reactivex.Single
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
-private const val TAG = "RemoteProjectDSImpl"
-
 class RemoteProjectDataSourceImpl @Inject constructor(
-    private val apiService: ApiService, private val exceptionHandler: RetrofitExceptionHandler
-) : RemoteProjectDataSource {
+    private val apiService: ApiService
+) : RemoteProjectDataSource, BaseDataSource() {
 
-    override fun fetchProjects(
+    override suspend fun addBookmark(token: String, projectId: Int) {
+        apiService.addBookmark(BookmarkModel(token, projectId)).execute()
+    }
+
+    override suspend fun deleteBookmark(token: String, projectId: Int) {
+        apiService.deleteBookmark(BookmarkModel(token, projectId)).execute()
+    }
+
+    override suspend fun fetchProjects(
         token: String, startAt: Int, limit: Int, type: FetchProjectType
-    ): Single<List<ProjectResponseModel>> = Single.create { emitter ->
+    ): DataState<List<ProjectResponseModel>> {
         val model = ProjectRequestModel(token, startAt, limit)
         val call = when (type) {
             FetchProjectType.ALL -> apiService.fetchProjects(model)
@@ -32,36 +34,17 @@ class RemoteProjectDataSourceImpl @Inject constructor(
             FetchProjectType.BOOKMARK -> apiService.fetchBookmarkProjects(model)
         }
 
-        call.enqueue(object : Callback<List<ProjectResponseModel>> {
-            override fun onResponse(
-                call: Call<List<ProjectResponseModel>>, response: Response<List<ProjectResponseModel>>
-            ) {
-                when (response.code()){
-                    HttpStatusCode.Ok.code -> {
-                        if (response.body().isNullOrEmpty())
-                            emitter.onError(InformationNotFound())
-                        else emitter.onSuccess(response.body()!!)
-                    }
-                    HttpStatusCode.NotAcceptable.code -> emitter.onError(UserNotInWorkspace())
-                }
+        return when (val response = makeRequest { call }) {
+            is ResponseDataState.Success -> {
+                if (response.httpStatusCode == HttpStatusCode.NotAcceptable.code)
+                    return DataState.Error(UserNotInWorkspace())
+                if (response.data.isNullOrEmpty())
+                    return DataState.Error(InformationNotFound())
 
-                Log.e(TAG, "onResponse: ${response.code()} ${response.body()}")
-                emitter.onError(UnknownError())
+                DataState.Success(response.data)
             }
 
-            override fun onFailure(call: Call<List<ProjectResponseModel>>, t: Throwable) {
-                Log.e(TAG, "onFailure: $t")
-                emitter.onError(exceptionHandler.handle(t))
-            }
-        })
+            is ResponseDataState.Error -> DataState.Error(response.t)
+        }
     }
-
-    override fun addBookmark(token: String, projectId: Int) {
-        apiService.addBookmark(BookmarkModel(token, projectId)).execute()
-    }
-
-    override fun deleteBookmark(token: String, projectId: Int) {
-        apiService.deleteBookmark(BookmarkModel(token, projectId)).execute()
-    }
-
 }
